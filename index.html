@@ -1,10 +1,4 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-</head>
-<body>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>cyb3radull4m</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <style>
@@ -21,9 +15,9 @@
   html{scroll-behavior:smooth}
   body{background:var(--bg);color:var(--fg);font-family:var(--f-sans);font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased;position:relative}
   /* grain overlay */
-  body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;opacity:.025;
+  body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;opacity:.07;
     background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-    background-repeat:repeat;background-size:180px}
+    background-repeat:repeat;background-size:180px;mix-blend-mode:overlay}
   ::selection{background:var(--accent);color:#0f1117}
   :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:3px}
   a{color:var(--accent-2);text-decoration:none}
@@ -31,7 +25,7 @@
   img{display:block;max-width:100%}
 
   /* SVG topo bg */
-  .topo-bg{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.035}
+  .topo-bg{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.12}
 
   .wrap{max-width:var(--maxw);margin:0 auto;
     padding-left:max(24px,env(safe-area-inset-left,0px));
@@ -188,17 +182,23 @@
 
 <!-- topographic background -->
 <svg class="topo-bg" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" viewBox="0 0 1440 900">
-  <path d="M0 340c120-30 240 20 360-10s240-60 360-20 240 50 360 10 240-40 360-20" fill="none" stroke="#5cc8a4" stroke-width=".7"/>
-  <path d="M0 380c100 20 200-30 340 0s280 40 400-10 260-50 360-10 220 30 340 10" fill="none" stroke="#d4a04a" stroke-width=".5"/>
-  <path d="M0 430c140-20 260 30 380 0s220-50 380-20 300 40 360 0 200-30 320 10" fill="none" stroke="#5cc8a4" stroke-width=".6"/>
-  <path d="M0 500c160 30 280-20 400 10s240 40 360-10 260-50 360 0 220 30 320-10" fill="none" stroke="#7d8599" stroke-width=".4"/>
-  <path d="M0 560c120-25 220 15 360 0s280-40 400 10 240 30 360-20 200-25 320 10" fill="none" stroke="#d4a04a" stroke-width=".4"/>
-  <path d="M0 240c180 20 300-25 420 0s260 30 380-15 280-25 360 5 200 20 280-5" fill="none" stroke="#7d8599" stroke-width=".5"/>
-  <path d="M0 640c140 15 260-20 380 5s240 25 380-10 280-30 340 5 220 20 340-5" fill="none" stroke="#5cc8a4" stroke-width=".3"/>
-  <path d="M0 180c160-15 280 20 420 5s260-25 380 10 240 20 360-5 200-15 280 5" fill="none" stroke="#282e3c" stroke-width=".8"/>
-  <path d="M0 720c120 20 240-15 380 5s280 30 400-10 260-20 340 5 220 15 320-5" fill="none" stroke="#282e3c" stroke-width=".6"/>
-  <path d="M0 120c200 10 320-15 440 5s280 20 380-5 220-15 340 5 180 10 280-5" fill="none" stroke="#7d8599" stroke-width=".3"/>
-  <path d="M0 800c160-10 280 15 400-5s260-20 380 10 240 15 340-5 200-10 320 5" fill="none" stroke="#282e3c" stroke-width=".4"/>
+  <path d="M0 60c180 25 320-15 480 10s300 30 440-15 280-20 400 10 220 15 320-5" fill="none" stroke="#3d4560" stroke-width="1.2"/>
+  <path d="M0 110c140-20 280 30 420 5s260-35 400 10 280 25 380-10 220-20 300 5" fill="none" stroke="#3d4560" stroke-width=".9"/>
+  <path d="M0 170c200 20 340-25 480 5s260 30 400-15 280-25 360 10 220 20 280-5" fill="none" stroke="#4a5575" stroke-width="1.4"/>
+  <path d="M0 230c160-15 300 25 440 0s280-30 400 15 260 25 380-10 200-20 320 5" fill="none" stroke="#3d4560" stroke-width="1"/>
+  <path d="M0 290c120 30 260-20 400 10s280 35 420-15 260-30 380 5 240 25 340-5" fill="none" stroke="#5cc8a4" stroke-width="1.5"/>
+  <path d="M0 340c180-25 320 20 460-5s240-35 380 15 300 30 420-10 240-25 340 10" fill="none" stroke="#3d4560" stroke-width="1.1"/>
+  <path d="M0 380c100 25 220-30 360 5s280 40 420-15 260-35 380 10 240 25 360-5" fill="none" stroke="#d4a04a" stroke-width="1.3"/>
+  <path d="M0 420c160-20 300 25 440 0s260-30 400 15 280 20 380-10 220-15 320 5" fill="none" stroke="#3d4560" stroke-width=".8"/>
+  <path d="M0 470c200 15 340-25 480 5s280 30 400-10 240-25 360 5 200 15 280-5" fill="none" stroke="#4a5575" stroke-width="1.2"/>
+  <path d="M0 520c140-25 280 20 420-5s260 30 400-15 280-25 380 10 220 20 300-5" fill="none" stroke="#5cc8a4" stroke-width="1"/>
+  <path d="M0 570c180 20 320-15 460 5s280-25 400 10 260 20 380-5 220-15 300 5" fill="none" stroke="#3d4560" stroke-width="1.3"/>
+  <path d="M0 620c120-20 260 25 400-5s280-30 420 15 260 25 380-10 240-20 340 5" fill="none" stroke="#d4a04a" stroke-width=".9"/>
+  <path d="M0 670c200 15 340-20 480 5s260 25 400-10 280-20 360 5 200 15 280-5" fill="none" stroke="#3d4560" stroke-width="1.1"/>
+  <path d="M0 720c160-15 300 20 440-5s280-25 400 10 260 20 380-5 220-15 320 5" fill="none" stroke="#4a5575" stroke-width="1.5"/>
+  <path d="M0 770c140 20 280-15 420 5s260 25 400-10 280-20 360 5 220 15 300-5" fill="none" stroke="#3d4560" stroke-width=".8"/>
+  <path d="M0 830c180-10 320 15 460-5s280-20 400 10 260 15 380-5 220-10 300 5" fill="none" stroke="#5cc8a4" stroke-width="1"/>
+  <path d="M0 880c120 10 260-15 400 5s280 20 420-10 260-15 380 5 240 10 340-5" fill="none" stroke="#3d4560" stroke-width=".7"/>
 </svg>
 
 <header>
@@ -764,5 +764,4 @@ nuclei -l live-js.txt -t http/exposures/ -o nuclei-js.txt</code></pre>
   }
 })();
 </script>
-</body>
 </html>
